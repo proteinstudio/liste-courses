@@ -264,16 +264,7 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
         <button class="btn" id="btn-connect" onclick="connectSupabase()" style="width:100%">Connecter</button>
         <button class="btn btn-sm" id="btn-disconnect" onclick="disconnectSupabase()" style="width:100%;display:none;border-color:rgba(168,68,68,.4);color:var(--red)">Déconnecter</button>
 
-        <hr class="hdiv">
-        <div class="sync-hint">
-          <strong style="color:rgba(255,255,255,.5)">Comment obtenir ces informations ?</strong><br>
-          1. Créez un compte gratuit sur supabase.com<br>
-          2. Nouveau projet → notez l'URL et la clé "anon"<br>
-          3. Ouvrez l'éditeur SQL et exécutez le script ci-dessous<br>
-          4. Collez URL + clé ici et cliquez Connecter
-        </div>
-        <div class="share-pre" style="font-size:11px;user-select:all;cursor:text" id="sql-script"></div>
-        <button class="btn btn-sm" onclick="copySQL()">Copier le script SQL</button>
+
       </div>
     </div>
 
