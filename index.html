@@ -1,1057 +1,1041 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2299.77">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Liste de courses</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#000;--s1:#0f0f11;--s2:#1a1a1f;--s3:#242428;--gold:#d4a856;--green:#4d8f62;--red:#a84444;--blue:#4a8fb5;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--r8:8px;--r12:12px}
+html,body{height:100%;background:var(--bg);color:#e8e6e1;font-family:Georgia,serif;font-size:15px;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto}
+#hdr{padding:14px 16px 8px;flex-shrink:0;display:flex;align-items:center;gap:10px}
+#hdr-text{flex:1}
+#hdr h1{font-size:24px;font-weight:normal;letter-spacing:-.3px}
+#hdr .sub{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.28);margin-top:2px}
+#sync-btn{width:36px;height:36px;min-width:36px;border-radius:50%;border:.5px solid rgba(255,255,255,.15);background:var(--s2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;position:relative}
+#sync-btn.connected{border-color:rgba(77,143,98,.5);background:rgba(77,143,98,.1)}
+#sync-btn.syncing{animation:spin 1s linear infinite}
+#sync-btn.error{border-color:rgba(168,68,68,.5);background:rgba(168,68,68,.1)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#sync-dot{width:8px;height:8px;border-radius:50%;position:absolute;top:2px;right:2px;display:none}
+#sync-dot.on{display:block}
+#sync-dot.green{background:var(--green)}
+#sync-dot.red{background:var(--red)}
+#sync-dot.orange{background:#c87941}
+#prog-wrap{height:1px;background:rgba(255,255,255,.06);flex-shrink:0}
+#prog-bar{height:1px;background:var(--gold);width:0%;transition:width .4s}
+#tabs{display:flex;gap:8px;padding:10px 16px 8px;flex-shrink:0}
+.tab{flex:1;padding:9px 4px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.4px;color:rgba(255,255,255,.4);cursor:pointer;background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r12);transition:all .2s;line-height:1.3}
+.tab.on{color:var(--gold);border-color:rgba(212,168,86,.35);background:rgba(212,168,86,.06)}
+#panels{flex:1;overflow:hidden;position:relative}
+.panel{position:absolute;inset:0;overflow-y:auto;padding:8px 16px 20px;display:none;flex-direction:column;gap:10px}
+.panel.on{display:flex}
+/* SETUP BANNER */
+#setup-banner{background:rgba(74,143,181,.08);border:.5px solid rgba(74,143,181,.35);border-radius:var(--r12);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+#setup-banner.hide{display:none}
+.sb-icon{font-size:20px;margin-top:1px}
+.sb-text{flex:1}
+.sb-title{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(74,143,181,.9);margin-bottom:4px}
+.sb-desc{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.4);line-height:1.6}
+.sb-btn{font-family:'Courier New',monospace;font-size:10px;padding:5px 10px;border-radius:6px;border:.5px solid rgba(74,143,181,.5);color:rgba(74,143,181,.9);cursor:pointer;background:transparent;margin-top:7px}
+.sb-btn:hover{background:rgba(74,143,181,.1)}
+/* BUDGET */
+#budget{background:var(--s2);border:.5px solid rgba(212,168,86,.3);border-radius:var(--r12);padding:12px 14px;display:flex;align-items:center;gap:10px}
+#budget.hide{display:none}
+.b-icon{font-size:22px}.b-text{flex:1}
+.b-label{font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;color:rgba(255,255,255,.35);margin-bottom:3px}
+.b-range{font-size:18px;color:var(--gold)}
+.b-detail{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.35);margin-top:3px;line-height:1.5}
+.b-info{font-size:16px;cursor:pointer;color:rgba(255,255,255,.25)}
+#counter{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.38);padding:2px 0}
+#toolbar{display:flex;gap:6px;flex-wrap:wrap}
+.btn{font-family:'Courier New',monospace;font-size:10px;letter-spacing:.5px;padding:7px 11px;border-radius:var(--r8);border:.5px solid;cursor:pointer;transition:all .15s;background:transparent;color:var(--gold);border-color:rgba(212,168,86,.4)}
+.btn:hover,.btn.on{background:rgba(212,168,86,.1);border-color:var(--gold)}
+.btn-sm{padding:6px 10px}
+.cat-sec{display:flex;flex-direction:column;gap:5px}
+.cat-hdr{display:flex;align-items:center;gap:8px;padding:4px 2px;cursor:pointer;user-select:none}
+.cat-em{font-size:16px;width:22px;text-align:center}
+.cat-nm{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1.2px;color:rgba(255,255,255,.45);flex:1;text-transform:uppercase}
+.cat-ct{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.28)}
+.cat-arr{color:rgba(255,255,255,.28);font-size:9px;transition:transform .2s}
+.cat-sec.col .cat-arr{transform:rotate(-90deg)}
+.cat-items{display:flex;flex-direction:column;gap:5px}
+.item{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r12);display:flex;align-items:center;gap:10px;padding:11px 12px;transition:transform .2s,background .15s}
+.item.swiping{background:rgba(168,68,68,.25)}
+.chk{width:24px;height:24px;min-width:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.chk.on{background:var(--green);border-color:var(--green)}
+.chk.on::after{content:'\2713';color:#fff;font-size:11px}
+.i-name{flex:1;font-size:15px;cursor:pointer}
+.i-qty{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.38);cursor:pointer;white-space:nowrap;margin-right:2px}
+.i-price{font-family:'Courier New',monospace;font-size:10px;color:rgba(212,168,86,.55);min-width:46px;text-align:right;white-space:nowrap}
+.i-del{width:30px;height:30px;min-width:30px;background:var(--s3);border:.5px solid var(--b2);border-radius:6px;color:rgba(255,255,255,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.i-del:hover{color:#fff}
+.item.done .i-name{text-decoration:line-through;opacity:.3}
+.item.done .i-qty,.item.done .i-price{opacity:.3}
+.item.done .chk{border-color:var(--green)}
+.editcard{background:var(--s2);border:.5px solid var(--gold);border-radius:var(--r12);display:flex;align-items:center;gap:6px;padding:8px 10px}
+.editcard input{background:var(--s3);border:.5px solid rgba(255,255,255,.12);border-radius:6px;color:#e8e6e1;font-family:Georgia,serif;font-size:14px;padding:6px 9px;outline:none;transition:border-color .2s}
+.editcard input:focus{border-color:var(--gold)}
+.editcard .en{flex:1;min-width:0}
+.editcard .eq{width:64px;font-family:'Courier New',monospace;font-size:12px}
+.editcard button{width:30px;height:30px;border-radius:6px;border:.5px solid;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;background:transparent;flex-shrink:0}
+.editcard .eok{color:var(--green);border-color:rgba(77,143,98,.5)}
+.editcard .ecx{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.15)}
+#empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:50px 20px;opacity:.5}
+#empty .ic{font-size:42px;opacity:.4}
+#empty p{font-family:'Courier New',monospace;font-size:11px;text-align:center;line-height:1.8;color:rgba(255,255,255,.45)}
+.box{background:var(--s1);border:.5px solid var(--b1);border-radius:var(--r12);padding:14px;display:flex;flex-direction:column;gap:10px}
+.lbl{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.35)}
+.row{display:flex;gap:7px}
+.row input{background:var(--s2);border:.5px solid var(--b2);border-radius:var(--r8);color:#e8e6e1;font-size:14px;padding:9px 11px;outline:none;transition:border-color .2s}
+.row input:focus{border-color:var(--gold)}
+#in-name{flex:1;min-width:0;font-family:Georgia,serif}
+#in-qty{width:68px;font-family:'Courier New',monospace;font-size:12px}
+#btn-add{font-size:17px;background:rgba(212,168,86,.1)}
+#suggs{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);overflow:hidden;display:none;margin-top:-4px}
+.sugg{padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:.5px solid var(--b1);display:flex;align-items:center;gap:8px}
+.sugg:last-child{border-bottom:none}
+.sugg:hover{background:var(--s3)}
+.sugg-cat{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.28);flex:1}
+.sugg-price{font-family:'Courier New',monospace;font-size:10px;color:rgba(212,168,86,.6);white-space:nowrap}
+#favs-list{display:flex;flex-direction:column;gap:4px}
+.fav{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);display:flex;align-items:center;gap:9px;padding:9px 11px}
+.fav-nm{flex:1;font-size:14px}
+.fav-del{width:26px;height:26px;background:transparent;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.fav-del:hover{color:var(--red)}
+.fav-chk{width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.fav-chk.on{background:var(--gold);border-color:var(--gold)}
+.fav-chk.on::after{content:'\2713';color:#000;font-size:10px}
+#btn-favs{width:100%}
+#btn-favs:disabled{opacity:.3;cursor:not-allowed}
+#recipe-area{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);color:#e8e6e1;font-family:Georgia,serif;font-size:14px;line-height:1.7;padding:11px;min-height:160px;resize:vertical;outline:none;width:100%;transition:border-color .2s}
+#recipe-area:focus{border-color:rgba(212,168,86,.5)}
+.share-pre{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);padding:11px;font-size:13px;line-height:1.75;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow-y:auto;color:rgba(255,255,255,.6);font-family:'Courier New',monospace}
+.hdiv{border:none;border-top:.5px solid var(--b1)}
+.steps{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.35);line-height:2;padding-left:18px}
+/* SYNC PANEL */
+.sync-field{display:flex;flex-direction:column;gap:5px}
+.sync-field label{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.5px}
+.sync-field input{background:var(--s2);border:.5px solid var(--b2);border-radius:var(--r8);color:#e8e6e1;font-family:'Courier New',monospace;font-size:11px;padding:9px 11px;outline:none;transition:border-color .2s;width:100%}
+.sync-field input:focus{border-color:var(--gold)}
+.sync-field input.ok{border-color:rgba(77,143,98,.5)}
+.sync-field input.err{border-color:rgba(168,68,68,.5)}
+.sync-status{font-family:'Courier New',monospace;font-size:10px;padding:8px 10px;border-radius:var(--r8);line-height:1.6}
+.sync-status.info{background:rgba(74,143,181,.08);color:rgba(74,143,181,.9);border:.5px solid rgba(74,143,181,.2)}
+.sync-status.ok{background:rgba(77,143,98,.08);color:rgba(77,143,98,.9);border:.5px solid rgba(77,143,98,.2)}
+.sync-status.err{background:rgba(168,68,68,.08);color:rgba(168,68,68,.9);border:.5px solid rgba(168,68,68,.2)}
+.sync-hint{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);line-height:1.7}
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:var(--s1);border:.5px solid var(--b2);border-top-left-radius:20px;border-top-right-radius:20px;padding:20px 16px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.modal-title{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:4px}
+.ord-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);cursor:grab;user-select:none}
+.ord-item.dragging{opacity:.4}
+.drag-h{color:rgba(255,255,255,.2);font-size:18px;letter-spacing:-2px}
+.ord-nm{font-family:'Courier New',monospace;font-size:11px;flex:1;color:rgba(255,255,255,.6)}
+.bi-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--s2);border-radius:var(--r8);border:.5px solid var(--b1);gap:6px}
+.bi-nm{font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bi-unit{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}
+.bi-val{font-family:'Courier New',monospace;font-size:11px;color:var(--gold);white-space:nowrap}
+.bi-unk{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.2)}
+.bi-note{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);line-height:1.6;padding-top:4px}
+#toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--s1);border:.5px solid var(--gold);border-radius:var(--r8);color:var(--gold);font-family:'Courier New',monospace;font-size:11px;padding:9px 18px;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:9999}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="fr"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"&gt;</p>
-<p class="p1">&lt;title&gt;Liste de courses&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1">*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}</p>
-<p class="p1">:root{--bg:#000;--s1:#0f0f11;--s2:#1a1a1f;--s3:#242428;--gold:#d4a856;--green:#4d8f62;--red:#a84444;--blue:#4a8fb5;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--r8:8px;--r12:12px}</p>
-<p class="p1">html,body{height:100%;background:var(--bg);color:#e8e6e1;font-family:Georgia,serif;font-size:15px;overflow:hidden}</p>
-<p class="p1">#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto}</p>
-<p class="p1">#hdr{padding:14px 16px 8px;flex-shrink:0;display:flex;align-items:center;gap:10px}</p>
-<p class="p1">#hdr-text{flex:1}</p>
-<p class="p1">#hdr h1{font-size:24px;font-weight:normal;letter-spacing:-.3px}</p>
-<p class="p1">#hdr .sub{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.28);margin-top:2px}</p>
-<p class="p1">#sync-btn{width:36px;height:36px;min-width:36px;border-radius:50%;border:.5px solid rgba(255,255,255,.15);background:var(--s2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;position:relative}</p>
-<p class="p1">#sync-btn.connected{border-color:rgba(77,143,98,.5);background:rgba(77,143,98,.1)}</p>
-<p class="p1">#sync-btn.syncing{animation:spin 1s linear infinite}</p>
-<p class="p1">#sync-btn.error{border-color:rgba(168,68,68,.5);background:rgba(168,68,68,.1)}</p>
-<p class="p1">@keyframes spin{to{transform:rotate(360deg)}}</p>
-<p class="p1">#sync-dot{width:8px;height:8px;border-radius:50%;position:absolute;top:2px;right:2px;display:none}</p>
-<p class="p1">#sync-dot.on{display:block}</p>
-<p class="p1">#sync-dot.green{background:var(--green)}</p>
-<p class="p1">#sync-dot.red{background:var(--red)}</p>
-<p class="p1">#sync-dot.orange{background:#c87941}</p>
-<p class="p1">#prog-wrap{height:1px;background:rgba(255,255,255,.06);flex-shrink:0}</p>
-<p class="p1">#prog-bar{height:1px;background:var(--gold);width:0%;transition:width .4s}</p>
-<p class="p1">#tabs{display:flex;gap:8px;padding:10px 16px 8px;flex-shrink:0}</p>
-<p class="p1">.tab{flex:1;padding:9px 4px;text-align:center;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.4px;color:rgba(255,255,255,.4);cursor:pointer;background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r12);transition:all .2s;line-height:1.3}</p>
-<p class="p1">.tab.on{color:var(--gold);border-color:rgba(212,168,86,.35);background:rgba(212,168,86,.06)}</p>
-<p class="p1">#panels{flex:1;overflow:hidden;position:relative}</p>
-<p class="p1">.panel{position:absolute;inset:0;overflow-y:auto;padding:8px 16px 20px;display:none;flex-direction:column;gap:10px}</p>
-<p class="p1">.panel.on{display:flex}</p>
-<p class="p1">/* SETUP BANNER */</p>
-<p class="p1">#setup-banner{background:rgba(74,143,181,.08);border:.5px solid rgba(74,143,181,.35);border-radius:var(--r12);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}</p>
-<p class="p1">#setup-banner.hide{display:none}</p>
-<p class="p1">.sb-icon{font-size:20px;margin-top:1px}</p>
-<p class="p1">.sb-text{flex:1}</p>
-<p class="p1">.sb-title{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(74,143,181,.9);margin-bottom:4px}</p>
-<p class="p1">.sb-desc{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.4);line-height:1.6}</p>
-<p class="p1">.sb-btn{font-family:'Courier New',monospace;font-size:10px;padding:5px 10px;border-radius:6px;border:.5px solid rgba(74,143,181,.5);color:rgba(74,143,181,.9);cursor:pointer;background:transparent;margin-top:7px}</p>
-<p class="p1">.sb-btn:hover{background:rgba(74,143,181,.1)}</p>
-<p class="p1">/* BUDGET */</p>
-<p class="p1">#budget{background:var(--s2);border:.5px solid rgba(212,168,86,.3);border-radius:var(--r12);padding:12px 14px;display:flex;align-items:center;gap:10px}</p>
-<p class="p1">#budget.hide{display:none}</p>
-<p class="p1">.b-icon{font-size:22px}.b-text{flex:1}</p>
-<p class="p1">.b-label{font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;color:rgba(255,255,255,.35);margin-bottom:3px}</p>
-<p class="p1">.b-range{font-size:18px;color:var(--gold)}</p>
-<p class="p1">.b-detail{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.35);margin-top:3px;line-height:1.5}</p>
-<p class="p1">.b-info{font-size:16px;cursor:pointer;color:rgba(255,255,255,.25)}</p>
-<p class="p1">#counter{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.38);padding:2px 0}</p>
-<p class="p1">#toolbar{display:flex;gap:6px;flex-wrap:wrap}</p>
-<p class="p1">.btn{font-family:'Courier New',monospace;font-size:10px;letter-spacing:.5px;padding:7px 11px;border-radius:var(--r8);border:.5px solid;cursor:pointer;transition:all .15s;background:transparent;color:var(--gold);border-color:rgba(212,168,86,.4)}</p>
-<p class="p1">.btn:hover,.btn.on{background:rgba(212,168,86,.1);border-color:var(--gold)}</p>
-<p class="p1">.btn-sm{padding:6px 10px}</p>
-<p class="p1">.cat-sec{display:flex;flex-direction:column;gap:5px}</p>
-<p class="p1">.cat-hdr{display:flex;align-items:center;gap:8px;padding:4px 2px;cursor:pointer;user-select:none}</p>
-<p class="p1">.cat-em{font-size:16px;width:22px;text-align:center}</p>
-<p class="p1">.cat-nm{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1.2px;color:rgba(255,255,255,.45);flex:1;text-transform:uppercase}</p>
-<p class="p1">.cat-ct{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.28)}</p>
-<p class="p1">.cat-arr{color:rgba(255,255,255,.28);font-size:9px;transition:transform .2s}</p>
-<p class="p1">.cat-sec.col .cat-arr{transform:rotate(-90deg)}</p>
-<p class="p1">.cat-items{display:flex;flex-direction:column;gap:5px}</p>
-<p class="p1">.item{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r12);display:flex;align-items:center;gap:10px;padding:11px 12px;transition:transform .2s,background .15s}</p>
-<p class="p1">.item.swiping{background:rgba(168,68,68,.25)}</p>
-<p class="p1">.chk{width:24px;height:24px;min-width:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}</p>
-<p class="p1">.chk.on{background:var(--green);border-color:var(--green)}</p>
-<p class="p1">.chk.on::after{content:'\2713';color:#fff;font-size:11px}</p>
-<p class="p1">.i-name{flex:1;font-size:15px;cursor:pointer}</p>
-<p class="p1">.i-qty{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.38);cursor:pointer;white-space:nowrap;margin-right:2px}</p>
-<p class="p1">.i-price{font-family:'Courier New',monospace;font-size:10px;color:rgba(212,168,86,.55);min-width:46px;text-align:right;white-space:nowrap}</p>
-<p class="p1">.i-del{width:30px;height:30px;min-width:30px;background:var(--s3);border:.5px solid var(--b2);border-radius:6px;color:rgba(255,255,255,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}</p>
-<p class="p1">.i-del:hover{color:#fff}</p>
-<p class="p1">.item.done .i-name{text-decoration:line-through;opacity:.3}</p>
-<p class="p1">.item.done .i-qty,.item.done .i-price{opacity:.3}</p>
-<p class="p1">.item.done .chk{border-color:var(--green)}</p>
-<p class="p1">.editcard{background:var(--s2);border:.5px solid var(--gold);border-radius:var(--r12);display:flex;align-items:center;gap:6px;padding:8px 10px}</p>
-<p class="p1">.editcard input{background:var(--s3);border:.5px solid rgba(255,255,255,.12);border-radius:6px;color:#e8e6e1;font-family:Georgia,serif;font-size:14px;padding:6px 9px;outline:none;transition:border-color .2s}</p>
-<p class="p1">.editcard input:focus{border-color:var(--gold)}</p>
-<p class="p1">.editcard .en{flex:1;min-width:0}</p>
-<p class="p1">.editcard .eq{width:64px;font-family:'Courier New',monospace;font-size:12px}</p>
-<p class="p1">.editcard button{width:30px;height:30px;border-radius:6px;border:.5px solid;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;background:transparent;flex-shrink:0}</p>
-<p class="p1">.editcard .eok{color:var(--green);border-color:rgba(77,143,98,.5)}</p>
-<p class="p1">.editcard .ecx{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.15)}</p>
-<p class="p1">#empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:50px 20px;opacity:.5}</p>
-<p class="p1">#empty .ic{font-size:42px;opacity:.4}</p>
-<p class="p1">#empty p{font-family:'Courier New',monospace;font-size:11px;text-align:center;line-height:1.8;color:rgba(255,255,255,.45)}</p>
-<p class="p1">.box{background:var(--s1);border:.5px solid var(--b1);border-radius:var(--r12);padding:14px;display:flex;flex-direction:column;gap:10px}</p>
-<p class="p1">.lbl{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.35)}</p>
-<p class="p1">.row{display:flex;gap:7px}</p>
-<p class="p1">.row input{background:var(--s2);border:.5px solid var(--b2);border-radius:var(--r8);color:#e8e6e1;font-size:14px;padding:9px 11px;outline:none;transition:border-color .2s}</p>
-<p class="p1">.row input:focus{border-color:var(--gold)}</p>
-<p class="p1">#in-name{flex:1;min-width:0;font-family:Georgia,serif}</p>
-<p class="p1">#in-qty{width:68px;font-family:'Courier New',monospace;font-size:12px}</p>
-<p class="p1">#btn-add{font-size:17px;background:rgba(212,168,86,.1)}</p>
-<p class="p1">#suggs{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);overflow:hidden;display:none;margin-top:-4px}</p>
-<p class="p1">.sugg{padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:.5px solid var(--b1);display:flex;align-items:center;gap:8px}</p>
-<p class="p1">.sugg:last-child{border-bottom:none}</p>
-<p class="p1">.sugg:hover{background:var(--s3)}</p>
-<p class="p1">.sugg-cat{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.28);flex:1}</p>
-<p class="p1">.sugg-price{font-family:'Courier New',monospace;font-size:10px;color:rgba(212,168,86,.6);white-space:nowrap}</p>
-<p class="p1">#favs-list{display:flex;flex-direction:column;gap:4px}</p>
-<p class="p1">.fav{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);display:flex;align-items:center;gap:9px;padding:9px 11px}</p>
-<p class="p1">.fav-nm{flex:1;font-size:14px}</p>
-<p class="p1">.fav-del{width:26px;height:26px;background:transparent;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}</p>
-<p class="p1">.fav-del:hover{color:var(--red)}</p>
-<p class="p1">.fav-chk{width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}</p>
-<p class="p1">.fav-chk.on{background:var(--gold);border-color:var(--gold)}</p>
-<p class="p1">.fav-chk.on::after{content:'\2713';color:#000;font-size:10px}</p>
-<p class="p1">#btn-favs{width:100%}</p>
-<p class="p1">#btn-favs:disabled{opacity:.3;cursor:not-allowed}</p>
-<p class="p1">#recipe-area{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);color:#e8e6e1;font-family:Georgia,serif;font-size:14px;line-height:1.7;padding:11px;min-height:160px;resize:vertical;outline:none;width:100%;transition:border-color .2s}</p>
-<p class="p1">#recipe-area:focus{border-color:rgba(212,168,86,.5)}</p>
-<p class="p1">.share-pre{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);padding:11px;font-size:13px;line-height:1.75;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow-y:auto;color:rgba(255,255,255,.6);font-family:'Courier New',monospace}</p>
-<p class="p1">.hdiv{border:none;border-top:.5px solid var(--b1)}</p>
-<p class="p1">.steps{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.35);line-height:2;padding-left:18px}</p>
-<p class="p1">/* SYNC PANEL */</p>
-<p class="p1">.sync-field{display:flex;flex-direction:column;gap:5px}</p>
-<p class="p1">.sync-field label{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.5px}</p>
-<p class="p1">.sync-field input{background:var(--s2);border:.5px solid var(--b2);border-radius:var(--r8);color:#e8e6e1;font-family:'Courier New',monospace;font-size:11px;padding:9px 11px;outline:none;transition:border-color .2s;width:100%}</p>
-<p class="p1">.sync-field input:focus{border-color:var(--gold)}</p>
-<p class="p1">.sync-field input.ok{border-color:rgba(77,143,98,.5)}</p>
-<p class="p1">.sync-field input.err{border-color:rgba(168,68,68,.5)}</p>
-<p class="p1">.sync-status{font-family:'Courier New',monospace;font-size:10px;padding:8px 10px;border-radius:var(--r8);line-height:1.6}</p>
-<p class="p1">.sync-status.info{background:rgba(74,143,181,.08);color:rgba(74,143,181,.9);border:.5px solid rgba(74,143,181,.2)}</p>
-<p class="p1">.sync-status.ok{background:rgba(77,143,98,.08);color:rgba(77,143,98,.9);border:.5px solid rgba(77,143,98,.2)}</p>
-<p class="p1">.sync-status.err{background:rgba(168,68,68,.08);color:rgba(168,68,68,.9);border:.5px solid rgba(168,68,68,.2)}</p>
-<p class="p1">.sync-hint{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);line-height:1.7}</p>
-<p class="p1">/* MODALS */</p>
-<p class="p1">.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:none;align-items:flex-end;justify-content:center}</p>
-<p class="p1">.overlay.on{display:flex}</p>
-<p class="p1">.modal{background:var(--s1);border:.5px solid var(--b2);border-top-left-radius:20px;border-top-right-radius:20px;padding:20px 16px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px}</p>
-<p class="p1">.modal-title{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:4px}</p>
-<p class="p1">.ord-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);cursor:grab;user-select:none}</p>
-<p class="p1">.ord-item.dragging{opacity:.4}</p>
-<p class="p1">.drag-h{color:rgba(255,255,255,.2);font-size:18px;letter-spacing:-2px}</p>
-<p class="p1">.ord-nm{font-family:'Courier New',monospace;font-size:11px;flex:1;color:rgba(255,255,255,.6)}</p>
-<p class="p1">.bi-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--s2);border-radius:var(--r8);border:.5px solid var(--b1);gap:6px}</p>
-<p class="p1">.bi-nm{font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}</p>
-<p class="p1">.bi-unit{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}</p>
-<p class="p1">.bi-val{font-family:'Courier New',monospace;font-size:11px;color:var(--gold);white-space:nowrap}</p>
-<p class="p1">.bi-unk{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.2)}</p>
-<p class="p1">.bi-note{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);line-height:1.6;padding-top:4px}</p>
-<p class="p1">#toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--s1);border:.5px solid var(--gold);border-radius:var(--r8);color:var(--gold);font-family:'Courier New',monospace;font-size:11px;padding:9px 18px;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:9999}</p>
-<p class="p1">#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}</p>
-<p class="p1">::-webkit-scrollbar{width:2px}</p>
-<p class="p1">::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;div id="app"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="hdr"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="hdr-text"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1&gt;Ma liste de courses&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sub"&gt;// marché · supermarché · épicerie&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="sync-btn" onclick="gotoTab(4)" title="Synchronisation"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;span id="sync-icon"&gt;☁️&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;span id="sync-dot" class="on orange"&gt;&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="prog-wrap"&gt;&lt;div id="prog-bar"&gt;&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="tabs"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="tab on"<span class="Apple-converted-space">  </span>onclick="gotoTab(0)"&gt;Liste&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="tab" <span class="Apple-converted-space">    </span>onclick="gotoTab(1)"&gt;+ Article&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="tab" <span class="Apple-converted-space">    </span>onclick="gotoTab(2)"&gt;Recette&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="tab" <span class="Apple-converted-space">    </span>onclick="gotoTab(3)"&gt;Partager&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="tab" <span class="Apple-converted-space">    </span>onclick="gotoTab(4)"&gt;⚙ Sync&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="panels"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- LISTE --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="panel on" id="p0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="setup-banner"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sb-icon"&gt;☁️&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sb-text"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="sb-title"&gt;SYNCHRONISATION NON CONFIGURÉE&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="sb-desc"&gt;Configurez la sync pour accéder à votre liste sur tous vos appareils.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="sb-btn" onclick="gotoTab(4)"&gt;Configurer →&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="budget" class="hide"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="b-icon"&gt;🛒&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="b-text"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="b-label"&gt;ESTIMATION CARREFOUR FRANCE&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="b-range" id="b-range"&gt;—&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="b-detail" id="b-detail"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="b-info" onclick="openBI()"&gt;ⓘ&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="counter"&gt;0 articles · 0 faits&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="toolbar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" id="btn-encours" onclick="toggleEncours()"&gt;En cours&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" onclick="openOrder()"&gt;Ordre rayons&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" onclick="clearDone()"&gt;Effacer fait&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="list-container"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="empty"&gt;&lt;div class="ic"&gt;🛒&lt;/div&gt;&lt;p&gt;Aucun article.&lt;br&gt;Ajoutez un ingrédient&lt;br&gt;ou collez une recette.&lt;/p&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- ADD --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="panel" id="p1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lbl"&gt;AJOUTER UN ARTICLE&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="in-name" type="text" placeholder="Ingrédient…" autocomplete="off"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="in-qty"<span class="Apple-converted-space">  </span>type="text" placeholder="Qté"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn" id="btn-add" onclick="addFromInput()"&gt;+&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="suggs"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lbl"&gt;FAVORIS&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="favs-list"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn" id="btn-favs" disabled onclick="addSelFavs()"&gt;Ajouter 0 article à la liste&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- RECETTE --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="panel" id="p2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lbl"&gt;COLLER UNE LISTE D'INGRÉDIENTS&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea id="recipe-area" rows="7" placeholder="400g d'asperges&amp;#10;3 gousses d'ail&amp;#10;pousses d'épinards…"&gt;&lt;/textarea&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn" onclick="importRecipe()"&gt;Importer dans la liste&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- PARTAGER --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="panel" id="p3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lbl"&gt;COPIER LA LISTE&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="share-pre" id="share-r"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" onclick="copyShare('r')"&gt;Copier pour SMS / WhatsApp&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;hr class="hdiv"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lbl"&gt;COPIER POUR RÉIMPORT&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="share-pre" id="share-raw"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" onclick="copyShare('raw')"&gt;Copier le format brut&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- SYNC --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="panel" id="p4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lbl"&gt;SYNCHRONISATION SUPABASE&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="sync-status-box" class="sync-status info"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>Non configuré — vos données restent locales sur cet appareil.</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sync-field"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;label&gt;URL DU PROJET SUPABASE&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="sb-url" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off" oninput="syncFieldChanged()"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sync-field"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;label&gt;CLÉ ANON (clé publique)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;input id="sb-key" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." autocomplete="off" oninput="syncFieldChanged()"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sync-field"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;label&gt;IDENTIFIANT DE LISTE (partagez ce code avec vos amis)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;input id="sb-listid" type="text" placeholder="ex: famille-dupont" autocomplete="off" oninput="syncFieldChanged()" style="flex:1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-sm" onclick="genListId()"&gt;Générer&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn" id="btn-connect" onclick="connectSupabase()" style="width:100%"&gt;Connecter&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" id="btn-disconnect" onclick="disconnectSupabase()" style="width:100%;display:none;border-color:rgba(168,68,68,.4);color:var(--red)"&gt;Déconnecter&lt;/button&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;hr class="hdiv"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sync-hint"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;strong style="color:rgba(255,255,255,.5)"&gt;Comment obtenir ces informations ?&lt;/strong&gt;&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>1. Créez un compte gratuit sur supabase.com&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>2. Nouveau projet → notez l'URL et la clé "anon"&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>3. Ouvrez l'éditeur SQL et exécutez le script ci-dessous&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>4. Collez URL + clé ici et cliquez Connecter</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="share-pre" style="font-size:11px;user-select:all;cursor:text" id="sql-script"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" onclick="copySQL()"&gt;Copier le script SQL&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;!-- MODALS --&gt;</p>
-<p class="p1">&lt;div class="overlay" id="ov-order" onclick="maybeCloseOrder(event)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="modal"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="modal-title"&gt;Ordre des rayons — glisser pour réordonner&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="order-list"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn" style="width:100%;margin-top:6px" onclick="closeOrder()"&gt;Fermer&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p1">&lt;div class="overlay" id="ov-bi" onclick="maybeCloseBI(event)"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="modal"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="modal-title"&gt;Détail estimations — Carrefour France 2025&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="bi-rows"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="bi-note"&gt;Bas = MDD / premier prix · Haut = marque nationale&lt;br&gt;Arrondi au conditionnement entier supérieur.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn" style="width:100%;margin-top:4px" onclick="closeBI()"&gt;Fermer&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p1">&lt;div id="toast"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// UTILITAIRES</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function nrm(s){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return String(s).toLowerCase()</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.normalize('NFD').replace(/[\u0300-\u036f]/g,'')</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.replace(/[\u2018\u2019\u02bc']/g,' ')</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.replace(/\s+/g,' ').trim();</p>
-<p class="p1">}</p>
-<p class="p1">function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }</p>
-<p class="p1">function fmt(n){ return n.toFixed(2).replace('.',','); }</p>
-<p class="p1">function toast(msg){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var t=document.getElementById('toast');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>t.textContent=msg; t.classList.add('on');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('on');},2400);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// BASE DE DONNÉES PRIX</p>
-<p class="p1">// [prix_bas, prix_haut, label_unité, poids_ref_g]</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">var DB = {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'tomate cerise':[2.5,4.5,'€/barq.',250],'tomate':[1.8,3.5,'€/kg',120],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'carotte':[0.9,1.8,'€/kg',100],'courgette':[1.5,2.8,'€/kg',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'poivron':[2.0,3.5,'€/kg',200],'aubergine':[2.0,3.2,'€/kg',300],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'brocoli':[1.8,2.8,'€/pièce',400],'chou-fleur':[1.5,2.5,'€/pièce',700],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'epinard':[1.8,3.0,'€/sachet',300],'salade':[1.0,1.8,'€/pièce',300],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'laitue':[1.0,1.8,'€/pièce',300],'mache':[1.5,2.5,'€/sachet',100],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'roquette':[1.5,2.5,'€/sachet',100],'poireau':[1.5,2.5,'€/kg',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'haricot vert':[2.0,3.5,'€/kg',500],'petit pois':[1.5,3.0,'€/kg',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pois chiche':[0.9,2.0,'€/boîte',400],'lentille':[1.0,2.5,'€/kg',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'concombre':[0.8,1.5,'€/pièce',400],'radis':[0.8,1.5,'€/botte',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'betterave':[1.0,2.0,'€/kg',300],'asperge':[3.5,7.0,'€/botte',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'artichaut':[1.5,3.0,'€/pièce',300],'champignon':[2.0,3.5,'€/barq.',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'oignon':[0.8,1.5,'€/kg',100],'echalote':[2.0,3.5,'€/kg',50],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'ail':[1.5,3.0,'€/tête',40],'gingembre':[2.0,4.0,'€/100g',50],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pomme de terre':[0.8,1.5,'€/kg',1000],'patate douce':[1.5,2.8,'€/kg',300],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'avocat':[0.9,1.8,'€/pièce',180],'fenouil':[1.2,2.2,'€/pièce',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'celeri':[1.5,2.5,'€/pied',500],'potimarron':[1.5,2.5,'€/kg',1200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'courge':[1.5,3.0,'€/kg',1000],'piment':[1.5,3.0,'€/kg',30],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'mais':[0.5,1.2,'€/épi',300],'endive':[1.5,2.5,'€/kg',120],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'persil':[0.7,1.2,'€/botte',50],'basilic':[1.0,2.0,'€/pot',30],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'menthe':[0.8,1.5,'€/botte',30],'ciboulette':[0.8,1.5,'€/botte',30],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'thym':[0.8,1.5,'€/botte',25],'romarin':[0.8,1.5,'€/botte',25],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'estragon':[0.8,1.5,'€/botte',25],'coriandre':[0.8,1.5,'€/botte',25],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pomme':[1.5,2.5,'€/kg',180],'poire':[1.8,3.0,'€/kg',180],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'banane':[1.2,1.8,'€/kg',120],'orange':[1.2,2.0,'€/kg',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'citron':[1.5,2.5,'€/filet',100],'lime':[0.5,1.0,'€/pièce',80],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'mandarine':[1.8,3.0,'€/kg',100],'clementine':[1.8,3.0,'€/kg',100],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'raisin':[2.5,4.5,'€/kg',1000],'fraise':[3.0,5.5,'€/barq.',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'framboise':[3.0,5.5,'€/barq.',125],'kiwi':[1.5,2.5,'€/kg',80],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'ananas':[1.5,3.0,'€/pièce',1000],'mangue':[1.5,3.0,'€/pièce',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'melon':[1.5,3.0,'€/pièce',1200],'pasteque':[1.0,2.0,'€/kg',3000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'figue':[2.5,4.5,'€/barq.',200],'noix de coco':[1.5,2.5,'€/pièce',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'grenade':[1.5,3.0,'€/pièce',300],'abricot':[3.0,5.5,'€/kg',50],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'peche':[2.5,4.5,'€/kg',150],'nectarine':[2.5,4.5,'€/kg',150],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cerise':[5.0,9.0,'€/kg',8],'myrtille':[3.5,6.0,'€/barq.',125],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'poulet':[5.0,10.0,'€/kg',1200],'boeuf':[10.0,18.0,'€/kg',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'veau':[12.0,20.0,'€/kg',400],'porc':[6.0,11.0,'€/kg',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'agneau':[12.0,22.0,'€/kg',500],'dinde':[6.0,10.0,'€/kg',600],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'canard':[8.0,15.0,'€/kg',800],'lapin':[7.0,13.0,'€/kg',800],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'jambon':[2.5,5.0,'€/paquet',200],'bacon':[2.0,4.0,'€/paquet',150],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'lardon':[1.5,3.0,'€/paquet',200],'saucisse':[2.5,4.5,'€/paquet',360],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'merguez':[3.0,5.0,'€/paquet',360],'chipolata':[2.5,4.5,'€/paquet',360],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'steak':[4.0,8.0,'€/paquet',300],'hache':[4.0,7.0,'€/paquet',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'escalope':[5.0,9.0,'€/paquet',300],'roti':[7.0,14.0,'€/pièce',800],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'chorizo':[2.0,4.5,'€/paquet',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'saumon':[7.0,14.0,'€/kg',400],'thon':[3.0,6.0,'€/boîte',160],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cabillaud':[8.0,15.0,'€/kg',400],'dorade':[7.0,13.0,'€/pièce',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'crevette':[8.0,15.0,'€/kg',300],'moule':[2.0,4.0,'€/kg',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'sardine':[1.5,3.5,'€/boîte',135],'maquereau':[1.5,3.0,'€/boîte',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'anchois':[2.0,4.5,'€/boîte',50],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'camembert':[2.0,4.0,'€/pièce',250],'brie':[3.0,6.0,'€/pièce',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'comte':[3.0,6.0,'€/200g',200],'emmental':[2.0,3.5,'€/paquet',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'gruyere':[2.0,3.5,'€/paquet',200],'mozzarella':[1.2,2.5,'€/boule',125],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'parmesan':[2.5,5.0,'€/100g',100],'ricotta':[1.5,2.8,'€/250g',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'mascarpone':[1.8,3.0,'€/250g',250],'feta':[2.0,4.0,'€/200g',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'chevre':[2.0,4.5,'€/pièce',120],'reblochon':[3.0,5.5,'€/pièce',450],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'raclette':[3.5,6.5,'€/paquet',400],'fromage blanc':[1.5,2.5,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'roquefort':[3.0,6.0,'€/200g',200],'gorgonzola':[3.0,6.0,'€/200g',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'lait':[0.9,1.5,'€/L',1000],'beurre':[2.0,4.0,'€/250g',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'creme fraiche':[1.0,2.0,'€/200g',200],'creme liquide':[1.0,2.0,'€/200ml',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'creme':[1.0,2.0,'€/200ml',200],'yaourt':[2.0,3.5,'€/pack',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'oeuf':[2.5,4.5,'€/boîte 12',660],'margarine':[1.5,3.0,'€/250g',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pain de mie':[1.2,2.5,'€/paquet',500],'pate feuilletee':[1.5,2.5,'€/rouleau',230],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pate brisee':[1.0,2.0,'€/rouleau',230],'pain':[0.9,1.8,'€/pièce',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'baguette':[0.9,1.3,'€/pièce',250],'brioche':[2.0,3.5,'€/pièce',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'croissant':[0.9,1.5,'€/pièce',80],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'flocons d avoine':[1.5,2.8,'€/kg',1000],'spaghetti':[0.8,2.5,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'linguine':[1.0,2.8,'€/500g',500],'tagliatelle':[1.0,2.8,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'penne':[0.8,2.5,'€/500g',500],'fusilli':[0.8,2.5,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'lasagne':[1.0,3.0,'€/500g',500],'gnocchi':[1.2,2.5,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pates':[0.8,2.5,'€/500g',500],'riz':[0.9,2.5,'€/kg',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'quinoa':[2.5,4.5,'€/500g',500],'boulgour':[2.0,3.5,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'semoule':[1.0,2.0,'€/kg',1000],'couscous':[1.0,2.0,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'farine':[0.8,1.8,'€/kg',1000],'polenta':[1.5,2.5,'€/kg',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cereales':[2.5,5.0,'€/boîte',375],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'huile d olive':[3.5,8.0,'€/L',1000],'huile de tournesol':[2.0,4.0,'€/L',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'huile de sesame':[3.0,6.0,'€/250ml',250],'huile':[2.0,5.0,'€/L',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'sel':[0.4,1.2,'€/kg',1000],'poivre':[1.5,3.5,'€/flacon',50],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'sucre':[1.2,2.0,'€/kg',1000],'miel':[3.0,6.0,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'confiture':[2.0,4.0,'€/pot',370],'pesto':[2.0,4.5,'€/pot',190],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'concentre de tomate':[0.8,2.0,'€/tube',200],'tomate pelee':[0.8,1.8,'€/boîte',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'olive':[2.0,4.0,'€/pot',180],'cornichon':[1.5,2.8,'€/pot',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'moutarde':[1.2,2.5,'€/pot',200],'mayonnaise':[1.5,3.0,'€/tube',320],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'ketchup':[1.5,2.8,'€/flacon',560],'sauce soja':[1.5,3.0,'€/flacon',150],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'vinaigre balsamique':[2.0,5.0,'€/flacon',250],'vinaigre de cidre':[1.5,3.0,'€/flacon',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'vinaigre':[0.8,2.0,'€/flacon',500],'bouillon':[1.5,2.5,'€/pack',72],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cumin':[1.0,2.5,'€/flacon',40],'curcuma':[1.0,2.5,'€/flacon',40],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'paprika':[1.0,2.5,'€/flacon',50],'curry':[1.0,2.5,'€/flacon',40],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cannelle':[1.0,2.5,'€/flacon',30],'muscade':[1.5,3.0,'€/flacon',30],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'levure':[0.5,1.5,'€/sachet',11],'noix':[3.0,6.0,'€/200g',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'noisette':[2.5,5.0,'€/200g',200],'amande':[3.0,6.0,'€/200g',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pistache':[3.5,7.0,'€/150g',150],'chapelure':[1.0,2.0,'€/500g',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'maizena':[1.0,2.0,'€/250g',250],'nutella':[3.5,5.5,'€/400g',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pate a tartiner':[2.5,5.5,'€/400g',400],'speculoos':[1.5,3.0,'€/paquet',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'oreo':[2.0,3.5,'€/paquet',154],'biscuit':[1.5,3.5,'€/paquet',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cookie':[1.5,3.5,'€/paquet',200],'madeleine':[1.5,3.0,'€/paquet',300],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'palmier':[1.5,3.0,'€/paquet',200],'chips':[1.5,3.5,'€/paquet',150],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pringles':[2.0,3.5,'€/boîte',185],'pop corn':[1.5,3.0,'€/paquet',100],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cacahuete':[1.5,3.5,'€/paquet',200],'noix de cajou':[2.5,5.0,'€/paquet',150],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'kinder':[1.5,4.0,'€/paquet',100],'haribo':[1.5,3.0,'€/sachet',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'carambar':[1.5,2.5,'€/sachet',120],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'coca-cola':[1.5,3.5,'€/1.5L',1500],'coca cola':[1.5,3.5,'€/1.5L',1500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'pepsi':[1.2,3.0,'€/1.5L',1500],'fanta':[1.2,3.0,'€/1.5L',1500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'sprite':[1.2,3.0,'€/1.5L',1500],'orangina':[1.5,3.0,'€/1.5L',1500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'oasis':[1.2,2.8,'€/1.5L',1500],'schweppes':[1.5,3.0,'€/1L',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'redbull':[1.5,2.5,'€/25cl',250],'red bull':[1.5,2.5,'€/25cl',250],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'monster':[1.5,2.5,'€/50cl',500],'perrier':[1.0,2.0,'€/75cl',750],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'badoit':[0.8,1.8,'€/1L',1000],'evian':[0.5,1.5,'€/1.5L',1500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'volvic':[0.5,1.5,'€/1.5L',1500],'cristaline':[0.3,0.8,'€/1.5L',1500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'vittel':[0.5,1.5,'€/1.5L',1500],'tropicana':[2.0,3.5,'€/1L',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'innocent':[2.5,4.0,'€/90cl',900],'nescafe':[3.0,7.0,'€/200g',200],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'kronenbourg':[5.0,9.0,'€/pack 6',198],'heineken':[6.0,10.0,'€/pack 6',198],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'leffe':[6.0,11.0,'€/pack 6',198],'grimbergen':[6.0,11.0,'€/pack 6',198],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'ricard':[18.0,25.0,'€/70cl',700],'pastis':[8.0,18.0,'€/70cl',700],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'whisky':[15.0,35.0,'€/70cl',700],'rhum':[12.0,25.0,'€/70cl',700],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'vodka':[10.0,25.0,'€/70cl',700],'gin':[12.0,28.0,'€/70cl',700],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'eau gazeuse':[0.3,1.0,'€/1.5L',1500],'eau':[0.2,0.8,'€/1.5L',1500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'jus d orange':[1.5,3.5,'€/L',1000],'jus de pomme':[1.0,2.5,'€/L',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'cafe':[3.0,8.0,'€/250g',250],'the':[2.0,4.5,'€/boîte',25],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'vin rouge':[4.0,12.0,'€/btl',750],'vin blanc':[4.0,12.0,'€/btl',750],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'vin rose':[4.0,10.0,'€/btl',750],'vin':[4.0,12.0,'€/btl',750],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'biere':[5.0,10.0,'€/pack',2000],'cidre':[3.0,6.0,'€/btl',750],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'lait d amande':[1.5,2.8,'€/L',1000],'lait de coco':[1.0,2.0,'€/400ml',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'lait de soja':[1.0,2.0,'€/L',1000],'lait d avoine':[1.5,2.8,'€/L',1000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'haagen dazs':[4.0,7.0,'€/pot',460],'ben jerry':[4.5,7.0,'€/pot',465],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'carte d or':[3.0,5.5,'€/pot',900],'mccain':[2.0,4.0,'€/paquet',600],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'glace':[2.0,5.0,'€/pot',500],'sorbet':[2.0,4.5,'€/pot',500],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'papier toilette':[3.0,7.0,'€/pack',800],'lessive':[5.0,12.0,'€/paquet',2000],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'liquide vaisselle':[1.5,3.5,'€/flacon',500],'shampoing':[2.0,7.0,'€/flacon',400],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'gel douche':[1.5,5.0,'€/flacon',400],'savon':[1.0,3.5,'€/pièce',100],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'dentifrice':[1.5,4.0,'€/tube',100],'deodorant':[2.0,5.0,'€/pièce',150],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>'rasoir':[3.0,8.0,'€/pièce',80]</p>
-<p class="p1">};</p>
-<p class="p1">var DB_KEYS = Object.keys(DB).sort(function(a,b){return b.length-a.length;});</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// CATÉGORIES</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">var CATS = [</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'fl',name:'Fruits &amp; Légumes',<span class="Apple-converted-space">  </span>emoji:'🥦'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'vi',name:'Viandes', <span class="Apple-converted-space">          </span>emoji:'🥩'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'po',name:'Poissons',<span class="Apple-converted-space">          </span>emoji:'🐟'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'fr',name:'Fromages &amp; Frais',<span class="Apple-converted-space">  </span>emoji:'🧀'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'la',name:'Produits laitiers', emoji:'🥛'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'bo',name:'Boulangerie', <span class="Apple-converted-space">      </span>emoji:'🥖'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'fe',name:'Féculents', <span class="Apple-converted-space">        </span>emoji:'🌾'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'co',name:'Épicerie &amp; Snacks', emoji:'🥫'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'bv',name:'Boissons',<span class="Apple-converted-space">          </span>emoji:'🧃'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'su',name:'Surgelés',<span class="Apple-converted-space">          </span>emoji:'❄️'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'br',name:'Bricolage', <span class="Apple-converted-space">        </span>emoji:'🔧'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'sa',name:'Santé', <span class="Apple-converted-space">            </span>emoji:'💊'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'hy',name:'Hygiène', <span class="Apple-converted-space">          </span>emoji:'🧴'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'an',name:'Animaux', <span class="Apple-converted-space">          </span>emoji:'🐾'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{id:'au',name:'Autre', <span class="Apple-converted-space">            </span>emoji:'🛒'},</p>
-<p class="p1">];</p>
-<p class="p1">var KW = {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>fl:['pomme de terre','tomate cerise','tomate','salade','laitue','carotte','courgette','poivron','aubergine','brocoli','chou-fleur','epinard','poireau','haricot vert','petit pois','pois chiche','lentille','mais','concombre','radis','betterave','asperge','artichaut','fenouil','celeri','courge','champignon','oignon','echalote','ail','gingembre','roquette','mache','endive','patate douce','piment','persil','ciboulette','estragon','menthe','basilic','thym','romarin','coriandre','pomme','poire','banane','orange','citron','lime','mandarine','clementine','raisin','fraise','framboise','myrtille','abricot','peche','nectarine','cerise','kiwi','ananas','mangue','melon','pasteque','figue','avocat','noix de coco','grenade','groseille','cassis'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>vi:['poulet','boeuf','veau','porc','agneau','dinde','canard','lapin','saucisse','merguez','chipolata','jambon','bacon','lardon','steak','escalope','cotelette','entrecote','roti','hache','foie','boudin','chorizo','salami','pancetta'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>po:['saumon','thon','cabillaud','merlu','sole','dorade','bar','sardine','maquereau','hareng','truite','colin','rouget','lotte','crevette','gambas','langouste','homard','crabe','moule','huitre','palourde','poulpe','calmar','anchois','fletan','turbot'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>fr:['camembert','brie','comte','emmental','gruyere','cheddar','gouda','mozzarella','parmesan','ricotta','mascarpone','boursin','roquefort','gorgonzola','feta','chevre','reblochon','munster','tomme','raclette','beaufort','cantal','mimolette','fromage blanc','fromage frais'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>la:['lait','beurre','creme fraiche','creme liquide','creme','yaourt','skyr','oeuf','margarine'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>bo:['pate feuilletee','pate brisee','pain de mie','pain','baguette','brioche','croissant','pain au chocolat','focaccia','naan','pita','tortilla','bagel'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>fe:['flocons d avoine','linguine','spaghetti','tagliatelle','penne','fusilli','rigatoni','farfalle','lasagne','ravioli','gnocchi','pates','riz','quinoa','boulgour','semoule','couscous','polenta','maizena','farine','cereales','granola'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>co:['huile d olive','huile de tournesol','huile de sesame','tomate pelee','concentre de tomate','vinaigre balsamique','vinaigre de cidre','pate a tartiner','noix de cajou','sauce soja','olive','cornichon','capre','bouillon','ketchup','mayonnaise','moutarde','vinaigre','huile','sel','poivre','cumin','curcuma','paprika','curry','cannelle','muscade','levure','sucre','miel','confiture','pesto','noix','noisette','amande','pistache','chapelure','maizena','nutella','speculoos','oreo','biscuit','cookie','madeleine','palmier','chips','pringles','pop corn','cacahuete','kinder','haribo','carambar'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>bv:['coca-cola','coca cola','red bull','jus d orange','jus de pomme','lait d amande','lait de soja','lait d avoine','lait de coco','vin rouge','vin blanc','vin rose','eau gazeuse','pepsi','fanta','sprite','orangina','oasis','schweppes','redbull','monster','perrier','badoit','evian','volvic','cristaline','vittel','tropicana','innocent','nescafe','kronenbourg','heineken','leffe','grimbergen','ricard','pastis','whisky','rhum','vodka','gin','eau','the','cafe','tisane','biere','vin','cidre','champagne'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>su:['haagen dazs','ben jerry','carte d or','mccain','pizza surgele','poisson pane','nuggets','frites surgele','legumes surgele','glace','sorbet'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>br:['vis','boulon','colle','peinture','ampoule','pile','batterie','tournevis','marteau','perceuse','scie','ruban adhesif','white spirit'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>sa:['doliprane','paracetamol','ibuprofene','nurofen','aspirine','advil','pansement','antiseptique','betadine','serum physiologique','spray nasal','collyre','creme solaire','vitamines'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>hy:['papier toilette','liquide vaisselle','shampoing','apres shampoing','gel douche','savon','deodorant','dentifrice','brosse a dents','rasoir','mouchoir','lessive','adoucissant','javel','bicarbonate'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>an:['royal canin','purina','whiskas','friskies','pedigree','croquette','pate pour chat','pate pour chien','nourriture chat','nourriture chien','litiere','jouet chat','jouet chien','laisse','collier'],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>au:[]</p>
-<p class="p1">};</p>
-<p class="p1">Object.keys(KW).forEach(function(k){KW[k].sort(function(a,b){return b.length-a.length;});});</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// MOTEUR PRIX</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function lookupDB(name){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var n=nrm(name);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for(var i=0;i&lt;DB_KEYS.length;i++){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(n.indexOf(nrm(DB_KEYS[i]))!==-1) return {key:DB_KEYS[i],d:DB[DB_KEYS[i]]};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return null;</p>
-<p class="p1">}</p>
-<p class="p1">function parseMult(qtyStr,itemName){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!qtyStr||!qtyStr.trim()) return {mult:1,label:''};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var s=qtyStr.trim().toLowerCase().replace(',','.');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var e=lookupDB(itemName); var refG=e?e.d[3]:null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var massM=s.match(/^(\d+(?:\.\d+)?)\s*(g|kg|mg)$/);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(massM){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var v=parseFloat(massM[1]),u=massM[2];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var g=u==='kg'?v*1000:u==='mg'?v/1000:v;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(refG&amp;&amp;refG&gt;0){var u2=Math.max(1,Math.ceil(g/refG));return {mult:u2,label:g+'g \u2192 \xd7'+u2};}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return {mult:1,label:''};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var volM=s.match(/^(\d+(?:\.\d+)?)\s*(ml|cl|dl|l)$/);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(volM){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var v2=parseFloat(volM[1]),u3=volM[2];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var ml=u3==='l'?v2*1000:u3==='dl'?v2*100:u3==='cl'?v2*10:v2;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(refG&amp;&amp;refG&gt;0){var u4=Math.max(1,Math.ceil(ml/refG));return {mult:u4,label:ml+'ml \u2192 \xd7'+u4};}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return {mult:1,label:''};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var numM=s.match(/^x?(\d+(?:\.\d+)?)$/);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(numM){var n2=Math.ceil(parseFloat(numM[1]));if(!isNaN(n2)&amp;&amp;n2&gt;0&amp;&amp;n2&lt;=200)return {mult:n2,label:n2&gt;1?'\xd7'+n2:''};}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return {mult:1,label:''};</p>
-<p class="p1">}</p>
-<p class="p1">function calcPrice(item){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var e=lookupDB(item.name); if(!e) return null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var pm=parseMult(item.qty,item.name);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return {lo:e.d[0]*pm.mult,hi:e.d[1]*pm.mult,unit:e.d[2],mult:pm.mult,label:pm.label};</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// DÉTECTION CATÉGORIE</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function detectCat(name){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var n=nrm(name);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for(var oi=0;oi&lt;catOrder.length;oi++){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var id=catOrder[oi]; if(id==='au') continue;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var list=KW[id]||[];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for(var ki=0;ki&lt;list.length;ki++){if(n.indexOf(nrm(list[ki]))!==-1) return id;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return 'au';</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// ÉTAT &amp; PERSISTANCE</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">var items <span class="Apple-converted-space">  </span>= JSON.parse(localStorage.getItem('crs_items')||'[]');</p>
-<p class="p1">var favs<span class="Apple-converted-space">    </span>= JSON.parse(localStorage.getItem('crs_favs') ||'[]');</p>
-<p class="p1">var catOrder= (function(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var saved=JSON.parse(localStorage.getItem('crs_order')||'null');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var all=CATS.map(function(c){return c.id;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!saved) return all;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var missing=all.filter(function(id){return saved.indexOf(id)===-1&amp;&amp;id!=='au';});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return saved.filter(function(id){return id!=='au';}).concat(missing).concat(['au']);</p>
-<p class="p1">})();</p>
-<p class="p1">var sbCfg <span class="Apple-converted-space">  </span>= JSON.parse(localStorage.getItem('crs_sbcfg')||'null');</p>
-<p class="p1">var collapsed={}, encours=false, editId=null, selFavs={}, activeTab=0;</p>
-<p class="p1">var supabase=null, syncChannel=null, syncPaused=false;</p>
-<p class="p2"><br></p>
-<p class="p1">function save(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>localStorage.setItem('crs_items',JSON.stringify(items));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>localStorage.setItem('crs_favs', JSON.stringify(favs));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>localStorage.setItem('crs_order',JSON.stringify(catOrder));</p>
-<p class="p1">}</p>
-<p class="p1">function orderedCats(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return catOrder.map(function(id){return CATS.find(function(c){return c.id===id;});}).filter(Boolean);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// SUPABASE SYNC</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">var SQL_SCRIPT =</p>
-<p class="p1">"-- Coller dans l'éditeur SQL de Supabase\n"+</p>
-<p class="p1">"create table if not exists liste_courses (\n"+</p>
-<p class="p1">"<span class="Apple-converted-space">  </span>list_id text not null,\n"+</p>
-<p class="p1">"<span class="Apple-converted-space">  </span>data<span class="Apple-converted-space">    </span>jsonb not null,\n"+</p>
-<p class="p1">"<span class="Apple-converted-space">  </span>updated_at timestamptz default now()\n"+</p>
-<p class="p1">");\n"+</p>
-<p class="p1">"create unique index if not exists\n"+</p>
-<p class="p1">"<span class="Apple-converted-space">  </span>liste_courses_list_id_idx on liste_courses(list_id);\n"+</p>
-<p class="p1">"alter table liste_courses enable row level security;\n"+</p>
-<p class="p1">"create policy \"public read write\" on liste_courses\n"+</p>
-<p class="p1">"<span class="Apple-converted-space">  </span>for all using (true) with check (true);";</p>
-<p class="p2"><br></p>
-<p class="p1">document.getElementById('sql-script').textContent = SQL_SCRIPT;</p>
-<p class="p2"><br></p>
-<p class="p1">function setSyncStatus(type, msg){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var box=document.getElementById('sync-status-box');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>box.className='sync-status '+type;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>box.textContent=msg;</p>
-<p class="p1">}</p>
-<p class="p1">function setSyncDot(color){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var dot=document.getElementById('sync-dot');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>dot.className='on '+(color||'');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!color) dot.className='';</p>
-<p class="p1">}</p>
-<p class="p1">function setSyncIcon(connected){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('sync-btn').className=connected?'connected':'';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncDot(connected?'green':'orange');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function pushToSupabase(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!supabase||!sbCfg) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var payload={list_id:sbCfg.listId, data:{items:items,favs:favs,catOrder:catOrder}, updated_at:new Date().toISOString()};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var r=await fetch(sbCfg.url+'/rest/v1/liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listId),{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>method:'GET',headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key,'Content-Type':'application/json'}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var existing=await r.json();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var method=existing&amp;&amp;existing.length&gt;0?'PATCH':'POST';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var url=sbCfg.url+'/rest/v1/liste_courses'+(method==='PATCH'?'?list_id=eq.'+encodeURIComponent(sbCfg.listId):'');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>await fetch(url,{method:method,headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} catch(e){ console.warn('push error',e); }</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function pullFromSupabase(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!supabase||!sbCfg) return false;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var r=await fetch(sbCfg.url+'/rest/v1/liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listId),{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var rows=await r.json();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(rows&amp;&amp;rows.length&gt;0&amp;&amp;rows[0].data){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>var d=rows[0].data;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(d.items) items=d.items;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(d.favs)<span class="Apple-converted-space">  </span>favs=d.favs;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(d.catOrder) catOrder=d.catOrder;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>save(); return true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} catch(e){ console.warn('pull error',e); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return false;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function startRealtimeSync(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!sbCfg) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(syncChannel){ try{syncChannel.unsubscribe();}catch(e){} }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>syncChannel=null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Polling léger toutes les 8s (fallback universel sans librairie Supabase)</p>
-<p class="p1"><span class="Apple-converted-space">  </span>clearInterval(window._syncInterval);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>window._syncInterval=setInterval(async function(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(syncPaused) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var changed=await pullFromSupabase();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(changed){ renderList(); renderFavs(); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>},8000);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function connectSupabase(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var url=document.getElementById('sb-url').value.trim().replace(/\/$/,'');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var key=document.getElementById('sb-key').value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var listId=document.getElementById('sb-listid').value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!url||!key||!listId){setSyncStatus('err','Tous les champs sont requis.');return;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('info','Connexion en cours…');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-connect').textContent='Connexion…';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var r=await fetch(url+'/rest/v1/liste_courses?limit=1',{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>headers:{'apikey':key,'Authorization':'Bearer '+key}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(!r.ok) throw new Error('HTTP '+r.status);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} catch(e){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('err','Erreur de connexion. Vérifiez l\'URL et la clé.\n'+e.message);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-connect').textContent='Connecter';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncDot('red');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>sbCfg={url:url,key:key,listId:listId};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>supabase=true;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>localStorage.setItem('crs_sbcfg',JSON.stringify(sbCfg));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Pull initial puis push si vide</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var pulled=await pullFromSupabase();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!pulled) await pushToSupabase();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('ok','✓ Connecté — synchronisation active\nListe : '+listId);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncIcon(true);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-connect').style.display='none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-disconnect').style.display='block';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('setup-banner').classList.add('hide');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>startRealtimeSync();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderList(); renderFavs();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>toast('☁️ Synchronisation active !');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function disconnectSupabase(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>clearInterval(window._syncInterval);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>supabase=null; sbCfg=null; syncChannel=null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>localStorage.removeItem('crs_sbcfg');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('info','Non configuré — vos données restent locales sur cet appareil.');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncIcon(false);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncDot('orange');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-connect').style.display='block';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-connect').textContent='Connecter';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-disconnect').style.display='none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('setup-banner').classList.remove('hide');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>toast('Synchronisation désactivée');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function syncFieldChanged(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-connect').textContent='Connecter';</p>
-<p class="p1">}</p>
-<p class="p1">function genListId(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var words=['courses','marche','maison','famille','cuisine','panier','liste'];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var w=words[Math.floor(Math.random()*words.length)];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('sb-listid').value=w+'-'+Math.random().toString(36).slice(2,6);</p>
-<p class="p1">}</p>
-<p class="p1">function copySQL(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>navigator.clipboard.writeText(SQL_SCRIPT);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>toast('Script SQL copié !');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Sauvegarde + push après chaque modification</p>
-<p class="p1">function saveAndSync(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>save();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(supabase&amp;&amp;sbCfg){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>syncPaused=true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>pushToSupabase().then(function(){syncPaused=false;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// ONGLETS</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function gotoTab(i){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>activeTab=i;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',j===i);});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.panel').forEach(function(p,j){p.classList.toggle('on',j===i);});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(i===0) renderList();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(i===1){renderFavs();renderSuggs('');}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(i===3) renderShare();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// BUDGET</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function computeBudget(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var pending=items.filter(function(x){return !x.done;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!pending.length) return null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var lo=0,hi=0,found=0,unknown=[];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>pending.forEach(function(item){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var p=calcPrice(item);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(p){lo+=p.lo;hi+=p.hi;found++;}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else unknown.push(item.name);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return {lo:lo,hi:hi,found:found,total:pending.length,unknown:unknown};</p>
-<p class="p1">}</p>
-<p class="p1">function renderBudget(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var b=computeBudget();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var el=document.getElementById('budget');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!b||b.total===0){el.classList.add('hide');return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.classList.remove('hide');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('b-range').textContent=</p>
-<p class="p1"><span class="Apple-converted-space">    </span>(b.lo===0&amp;&amp;b.hi===0)?'Non estimable':fmt(b.lo)+' \u20ac \u2013 '+fmt(b.hi)+' \u20ac';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var pct=Math.round(b.found/b.total*100);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var det=b.found+'/'+b.total+' articles estim\xe9s ('+pct+'%)';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(b.unknown.length&gt;0&amp;&amp;b.unknown.length&lt;=3) det+=' \xb7 non estim\xe9s\u00a0: '+b.unknown.join(', ');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else if(b.unknown.length&gt;3) det+=' \xb7 '+b.unknown.length+' non estim\xe9s';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('b-detail').textContent=det;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// RENDU LISTE</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function renderList(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var done=items.filter(function(x){return x.done;}).length;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var total=items.length;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('counter').textContent=total+' article'+(total!==1?'s':'')+' \xb7 '+done+' fait'+(done!==1?'s':'');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('prog-bar').style.width=total&gt;0?Math.round(done/total*100)+'%':'0%';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btn-encours').classList.toggle('on',encours);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderBudget();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var ctn=document.getElementById('list-container');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var empty=document.getElementById('empty');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ctn.innerHTML=''; var hasAny=false;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>orderedCats().forEach(function(cat){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var ci=items.filter(function(x){return x.cat===cat.id;});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(!ci.length) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var vis=encours?ci.filter(function(x){return !x.done;}):ci;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(!vis.length) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hasAny=true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var sec=document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>sec.className='cat-sec'+(collapsed[cat.id]?' col':'');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var hdr=document.createElement('div'); hdr.className='cat-hdr';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hdr.innerHTML='&lt;span class="cat-em"&gt;'+cat.emoji+'&lt;/span&gt;&lt;span class="cat-nm"&gt;'+cat.name+'&lt;/span&gt;&lt;span class="cat-ct"&gt;'+vis.length+'&lt;/span&gt;&lt;span class="cat-arr"&gt;\u25be&lt;/span&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hdr.onclick=(function(id){return function(){collapsed[id]=!collapsed[id];renderList();};})(cat.id);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>sec.appendChild(hdr);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(!collapsed[cat.id]){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>var wrap=document.createElement('div'); wrap.className='cat-items';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>vis.forEach(function(item){wrap.appendChild(editId===item.id?buildEdit(item):buildCard(item));});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>sec.appendChild(wrap);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ctn.appendChild(sec);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>empty.style.display=hasAny?'none':'flex';</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function buildCard(item){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var card=document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>card.className='item'+(item.done?' done':'');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>card.dataset.id=item.id;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var chk=document.createElement('button'); chk.className='chk'+(item.done?' on':'');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>chk.onclick=(function(it){return function(){it.done=!it.done;saveAndSync();renderList();};})(item);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var nm=document.createElement('span'); nm.className='i-name'; nm.textContent=item.name;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>nm.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var qty=document.createElement('span'); qty.className='i-qty'; qty.textContent=item.qty||'';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>qty.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var priceEl=document.createElement('span'); priceEl.className='i-price';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var p=calcPrice(item);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(p&amp;&amp;p.lo&gt;0) priceEl.textContent='~'+Math.round(p.lo)+'-'+Math.round(p.hi)+'\u20ac';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var del=document.createElement('button'); del.className='i-del'; del.innerHTML='\xd7';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>del.onclick=(function(id){return function(){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();};})(item.id);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>card.append(chk,nm,qty,priceEl,del);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Swipe</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var sx=0,dx=0,sw=false;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>card.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;dx=0;sw=false;},{passive:true});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>card.addEventListener('touchmove',function(e){dx=e.touches[0].clientX-sx;if(Math.abs(dx)&gt;10){sw=true;card.style.transform='translateX('+Math.min(0,dx)+'px)';card.classList.toggle('swiping',dx&lt;-50);}},{passive:true});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>card.addEventListener('touchend',(function(id){return function(){if(sw&amp;&amp;dx&lt;-80){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();}else{card.style.transform='';card.classList.remove('swiping');}};})(item.id));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return card;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function buildEdit(item){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var card=document.createElement('div'); card.className='editcard';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var ni=document.createElement('input'); ni.className='en'; ni.value=item.name; ni.placeholder='Nom';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var qi=document.createElement('input'); qi.className='eq'; qi.value=item.qty||''; qi.placeholder='Qté';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var ok=document.createElement('button'); ok.className='eok'; ok.textContent='\u2713';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var cx=document.createElement('button'); cx.className='ecx'; cx.textContent='\u2715';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function doConfirm(){var v=ni.value.trim();if(v){item.name=v;item.qty=qi.value.trim();item.cat=detectCat(v);}editId=null;saveAndSync();renderList();}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function doCancel(){editId=null;renderList();}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ok.onclick=doConfirm; cx.onclick=doCancel;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ni.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>qi.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>card.append(ni,qi,ok,cx); setTimeout(function(){ni.focus();},40);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return card;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function toggleEncours(){encours=!encours;renderList();}</p>
-<p class="p1">function clearDone(){items=items.filter(function(x){return !x.done;});saveAndSync();renderList();toast('Articles faits supprim\xe9s');}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// SUGGESTIONS &amp; AJOUT</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">document.getElementById('in-name').addEventListener('input',function(){renderSuggs(this.value);});</p>
-<p class="p1">document.getElementById('in-name').addEventListener('keydown',function(e){if(e.key==='Enter')addFromInput();});</p>
-<p class="p2"><br></p>
-<p class="p1">function renderSuggs(v){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var box=document.getElementById('suggs');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!v.trim()){box.style.display='none';return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var nv=nrm(v),hits=[];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>CATS.forEach(function(cat){(KW[cat.id]||[]).forEach(function(kw){if(nrm(kw).indexOf(nv)!==-1&amp;&amp;hits.length&lt;6)hits.push({kw:kw,cat:cat});});});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!hits.length){box.style.display='none';return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>box.style.display='block'; box.innerHTML='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>hits.forEach(function(h){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var d=document.createElement('div'); d.className='sugg';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var e=lookupDB(h.kw);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var ps=e?fmt(e.d[0])+'\u2013'+fmt(e.d[1])+' '+e.d[2]:'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>d.innerHTML='&lt;span&gt;'+h.kw+'&lt;/span&gt;&lt;span class="sugg-cat"&gt;'+h.cat.emoji+'&lt;/span&gt;'+(ps?'&lt;span class="sugg-price"&gt;'+ps+'&lt;/span&gt;':'');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>d.onclick=(function(kw){return function(){document.getElementById('in-name').value=kw;box.style.display='none';};})(h.kw);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>box.appendChild(d);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function addFromInput(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var n=document.getElementById('in-name').value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var q=document.getElementById('in-qty').value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!n) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>addItem(n,q,true);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('in-name').value='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('in-qty').value='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('suggs').style.display='none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderFavs(); toast('"'+n+'" ajout\xe9');</p>
-<p class="p1">}</p>
-<p class="p1">function addItem(name,qty,saveFav){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var existing=items.find(function(x){return nrm(x.name)===nrm(name);});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(existing){existing.qty=qty||existing.qty;saveAndSync();if(activeTab===0)renderList();return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>items.push({id:uid(),name:name,qty:qty||'',cat:detectCat(name),done:false});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(saveFav&amp;&amp;favs.indexOf(name)===-1) favs.push(name);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>saveAndSync(); if(activeTab===0) renderList();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// FAVORIS</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function renderFavs(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var list=document.getElementById('favs-list'); list.innerHTML='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!favs.length){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>list.innerHTML='&lt;div style="font-family:Courier New,monospace;font-size:11px;color:rgba(255,255,255,.28);padding:4px 2px"&gt;Aucun favori encore&lt;/div&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>favs.forEach(function(name){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>var row=document.createElement('div'); row.className='fav';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>var nm=document.createElement('span'); nm.className='fav-nm'; nm.textContent=name;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>var dl=document.createElement('button'); dl.className='fav-del'; dl.textContent='\xd7';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>dl.onclick=(function(n){return function(){favs=favs.filter(function(f){return f!==n;});delete selFavs[n];saveAndSync();renderFavs();};})(name);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>var ck=document.createElement('button'); ck.className='fav-chk'+(selFavs[name]?' on':'');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>ck.onclick=(function(n){return function(){selFavs[n]=!selFavs[n];renderFavs();};})(name);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>row.append(nm,dl,ck); list.appendChild(row);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var n=Object.keys(selFavs).filter(function(k){return selFavs[k];}).length;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var btn=document.getElementById('btn-favs'); btn.disabled=n===0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>btn.textContent='Ajouter '+n+' article'+(n!==1?'s':'')+' \xe0 la liste';</p>
-<p class="p1">}</p>
-<p class="p1">function addSelFavs(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var sel=Object.keys(selFavs).filter(function(k){return selFavs[k];});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>sel.forEach(function(name){addItem(name,'',false);});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>toast(sel.length+' article'+(sel.length&gt;1?'s':'')+' ajout\xe9'+(sel.length&gt;1?'s':''));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>selFavs={}; renderFavs(); renderList();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// IMPORT RECETTE</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">var NOISE=['rape','hache','frais','fraiche','emince','vert','verts','jaune','rouge','surgele','cuit','cru','entier','fin','gros','moulu','broye','blanc','noir','bio','extra','epais'];</p>
-<p class="p1">var ARTCL=['de la','du','d','des','le','la','les','l','un','une','en','au','aux','de'];</p>
-<p class="p1">var CONT=['gousse','tranche','filet','branche','botte','brin','zeste','cube','rondelle','quartier','morceau','tige','feuille','tete','bouquet','boite','sachet','pot'];</p>
-<p class="p1">function parseLine(line){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>line=line.replace(/^[\-\u2022*\u00b7\u2013\u2014&gt;]+\s*/,'').replace(/[\u2018\u2019\u02bc']/g,' ').replace(/\(.*?\)/g,'').trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!line) return null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var qty='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var qm=line.match(/^(\d[\d.,\/]*\s*(?:g|kg|ml|l|cl|dl)?)\s+/i);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(qm){qty=qm[1].trim();line=line.slice(qm[0].length);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var n=nrm(line);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ARTCL.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(a){n=n.replace(new RegExp('^'+nrm(a)+'\\s+'),'');});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for(var ci=0;ci&lt;CONT.length;ci++){var cm=n.match(new RegExp('(^|\\s)'+nrm(CONT[ci])+'s?\\s+(d |de |du |de la |des |d )?'));if(cm){var rest=n.slice(cm.index+cm[0].length).trim();if(rest){n=rest;break;}}}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ARTCL.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(a){n=n.replace(new RegExp('^'+nrm(a)+'\\s+'),'');});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var words=n.split(/\s+/).filter(function(w){return NOISE.indexOf(w)===-1&amp;&amp;ARTCL.indexOf(w)===-1&amp;&amp;w.length&gt;0;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var name=words.join(' ').trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!name) return null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>name=name.charAt(0).toUpperCase()+name.slice(1);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return {name:name,qty:qty};</p>
-<p class="p1">}</p>
-<p class="p1">function importRecipe(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var text=document.getElementById('recipe-area').value;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var added=0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>text.split(/[\n;]/).forEach(function(line){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var p=parseLine(line.trim()); if(!p) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(!items.find(function(x){return nrm(x.name)===nrm(p.name);})){addItem(p.name,p.qty,false);added++;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('recipe-area').value='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>toast(added+' article'+(added!==1?'s':'')+' import\xe9'+(added!==1?'s':''));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>gotoTab(0);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// PARTAGE</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function renderShare(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var r='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>orderedCats().forEach(function(cat){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var ci=items.filter(function(x){return x.cat===cat.id&amp;&amp;!x.done;});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(!ci.length) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>r+=cat.emoji+' '+cat.name+'\n';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ci.forEach(function(x){r+='<span class="Apple-converted-space">  </span>\u2022 '+x.name+(x.qty?' \u2014 '+x.qty:'')+'\n';});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>r+='\n';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('share-r').textContent=r.trim()||'(liste vide)';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var raw=items.filter(function(x){return !x.done;}).map(function(x){return x.name+(x.qty?' \u2014 '+x.qty:'');}).join('\n');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('share-raw').textContent=raw||'(liste vide)';</p>
-<p class="p1">}</p>
-<p class="p1">function copyShare(type){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var txt=document.getElementById(type==='r'?'share-r':'share-raw').textContent;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>navigator.clipboard.writeText(txt); toast('\u2713 Copi\xe9\u00a0!');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// MODALS</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">function openBI(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var rows=document.getElementById('bi-rows'); rows.innerHTML='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>items.filter(function(x){return !x.done;}).forEach(function(item){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var p=calcPrice(item); var pm=parseMult(item.qty,item.name);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var row=document.createElement('div'); row.className='bi-row';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var nm=document.createElement('span'); nm.className='bi-nm';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>nm.textContent=item.name+(item.qty?' ('+item.qty+')':'');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var unit=document.createElement('span'); unit.className='bi-unit';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var val=document.createElement('span');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(p&amp;&amp;p.lo&gt;0){unit.textContent=pm.label||'';val.className='bi-val';val.textContent='~'+fmt(p.lo)+'\u2013'+fmt(p.hi)+' \u20ac';}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else{val.className='bi-unk';val.textContent='?';}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>row.append(nm,unit,val); rows.appendChild(row);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('ov-bi').classList.add('on');</p>
-<p class="p1">}</p>
-<p class="p1">function closeBI(){document.getElementById('ov-bi').classList.remove('on');}</p>
-<p class="p1">function maybeCloseBI(e){if(e.target===document.getElementById('ov-bi'))closeBI();}</p>
-<p class="p2"><br></p>
-<p class="p1">var dragSrc=null;</p>
-<p class="p1">function openOrder(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var ol=document.getElementById('order-list'); ol.innerHTML='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>orderedCats().forEach(function(cat){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var item=document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.className='ord-item'; item.draggable=true; item.dataset.id=cat.id;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.innerHTML='&lt;span class="drag-h"&gt;\u2838\u2838&lt;/span&gt;&lt;span style="font-size:15px"&gt;'+cat.emoji+'&lt;/span&gt;&lt;span class="ord-nm"&gt;'+cat.name+'&lt;/span&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.addEventListener('dragstart',function(){dragSrc=item;setTimeout(function(){item.classList.add('dragging');},0);});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.addEventListener('dragend',function(){item.classList.remove('dragging');saveOrder();});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.addEventListener('dragover',function(e){e.preventDefault();var r=item.getBoundingClientRect();ol.insertBefore(dragSrc,e.clientY&lt;r.top+r.height/2?item:item.nextSibling);});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var sy=0,clone=null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.addEventListener('touchstart',function(e){sy=e.touches[0].clientY;dragSrc=item;clone=item.cloneNode(true);clone.style.cssText='position:fixed;width:'+item.offsetWidth+'px;opacity:.85;pointer-events:none;z-index:9999;top:'+item.getBoundingClientRect().top+'px;left:'+item.getBoundingClientRect().left+'px;background:var(--s3)';document.body.appendChild(clone);item.style.opacity='.3';},{passive:true});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.addEventListener('touchmove',function(e){var dy=e.touches[0].clientY-sy;if(clone)clone.style.top=(item.getBoundingClientRect().top+dy)+'px';var el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);var tgt=el&amp;&amp;el.closest('.ord-item');if(tgt&amp;&amp;tgt!==dragSrc){var r=tgt.getBoundingClientRect();ol.insertBefore(dragSrc,e.touches[0].clientY&lt;r.top+r.height/2?tgt:tgt.nextSibling);}},{passive:true});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>item.addEventListener('touchend',function(){item.style.opacity='';if(clone){clone.remove();clone=null;}saveOrder();});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ol.appendChild(item);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('ov-order').classList.add('on');</p>
-<p class="p1">}</p>
-<p class="p1">function saveOrder(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>catOrder=Array.from(document.querySelectorAll('#order-list .ord-item')).map(function(el){return el.dataset.id;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>save(); renderList();</p>
-<p class="p1">}</p>
-<p class="p1">function closeOrder(){document.getElementById('ov-order').classList.remove('on');}</p>
-<p class="p1">function maybeCloseOrder(e){if(e.target===document.getElementById('ov-order'))closeOrder();}</p>
-<p class="p2"><br></p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">// INIT</p>
-<p class="p1">// ═══════════════════════════════════════════════════════════════</p>
-<p class="p1">(function init(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Restaurer config Supabase si elle existe</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(sbCfg){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('sb-url').value=sbCfg.url;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('sb-key').value=sbCfg.key;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('sb-listid').value=sbCfg.listId;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>supabase=true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('ok','✓ Connecté — synchronisation active\nListe\u00a0: '+sbCfg.listId);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncIcon(true);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-connect').style.display='none';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('btn-disconnect').style.display='block';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('setup-banner').classList.add('hide');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Pull initial silencieux</p>
-<p class="p1"><span class="Apple-converted-space">    </span>pullFromSupabase().then(function(changed){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(changed){renderList();renderFavs();}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>startRealtimeSync();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderList();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderFavs();</p>
-<p class="p1">})();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<div id="app">
+  <div id="hdr">
+    <div id="hdr-text">
+      <h1>Ma liste de courses</h1>
+      <div class="sub">// marché · supermarché · épicerie</div>
+    </div>
+    <button id="sync-btn" onclick="gotoTab(4)" title="Synchronisation">
+      <span id="sync-icon">☁️</span>
+      <span id="sync-dot" class="on orange"></span>
+    </button>
+  </div>
+  <div id="prog-wrap"><div id="prog-bar"></div></div>
+  <div id="tabs">
+    <button class="tab on"  onclick="gotoTab(0)">Liste</button>
+    <button class="tab"     onclick="gotoTab(1)">+ Article</button>
+    <button class="tab"     onclick="gotoTab(2)">Recette</button>
+    <button class="tab"     onclick="gotoTab(3)">Partager</button>
+    <button class="tab"     onclick="gotoTab(4)">⚙ Sync</button>
+  </div>
+  <div id="panels">
+
+    <!-- LISTE -->
+    <div class="panel on" id="p0">
+      <div id="setup-banner">
+        <div class="sb-icon">☁️</div>
+        <div class="sb-text">
+          <div class="sb-title">SYNCHRONISATION NON CONFIGURÉE</div>
+          <div class="sb-desc">Configurez la sync pour accéder à votre liste sur tous vos appareils.</div>
+          <button class="sb-btn" onclick="gotoTab(4)">Configurer →</button>
+        </div>
+      </div>
+      <div id="budget" class="hide">
+        <div class="b-icon">🛒</div>
+        <div class="b-text">
+          <div class="b-label">ESTIMATION CARREFOUR FRANCE</div>
+          <div class="b-range" id="b-range">—</div>
+          <div class="b-detail" id="b-detail"></div>
+        </div>
+        <div class="b-info" onclick="openBI()">ⓘ</div>
+      </div>
+      <div id="counter">0 articles · 0 faits</div>
+      <div id="toolbar">
+        <button class="btn btn-sm" id="btn-encours" onclick="toggleEncours()">En cours</button>
+        <button class="btn btn-sm" onclick="openOrder()">Ordre rayons</button>
+        <button class="btn btn-sm" onclick="clearDone()">Effacer fait</button>
+      </div>
+      <div id="list-container"></div>
+      <div id="empty"><div class="ic">🛒</div><p>Aucun article.<br>Ajoutez un ingrédient<br>ou collez une recette.</p></div>
+    </div>
+
+    <!-- ADD -->
+    <div class="panel" id="p1">
+      <div class="box">
+        <div class="lbl">AJOUTER UN ARTICLE</div>
+        <div class="row">
+          <input id="in-name" type="text" placeholder="Ingrédient…" autocomplete="off">
+          <input id="in-qty"  type="text" placeholder="Qté">
+          <button class="btn" id="btn-add" onclick="addFromInput()">+</button>
+        </div>
+        <div id="suggs"></div>
+      </div>
+      <div class="box">
+        <div class="lbl">FAVORIS</div>
+        <div id="favs-list"></div>
+        <button class="btn" id="btn-favs" disabled onclick="addSelFavs()">Ajouter 0 article à la liste</button>
+      </div>
+    </div>
+
+    <!-- RECETTE -->
+    <div class="panel" id="p2">
+      <div class="box">
+        <div class="lbl">COLLER UNE LISTE D'INGRÉDIENTS</div>
+        <textarea id="recipe-area" rows="7" placeholder="400g d'asperges&#10;3 gousses d'ail&#10;pousses d'épinards…"></textarea>
+        <button class="btn" onclick="importRecipe()">Importer dans la liste</button>
+      </div>
+    </div>
+
+    <!-- PARTAGER -->
+    <div class="panel" id="p3">
+      <div class="box">
+        <div class="lbl">COPIER LA LISTE</div>
+        <div class="share-pre" id="share-r"></div>
+        <button class="btn btn-sm" onclick="copyShare('r')">Copier pour SMS / WhatsApp</button>
+        <hr class="hdiv">
+        <div class="lbl">COPIER POUR RÉIMPORT</div>
+        <div class="share-pre" id="share-raw"></div>
+        <button class="btn btn-sm" onclick="copyShare('raw')">Copier le format brut</button>
+      </div>
+    </div>
+
+    <!-- SYNC -->
+    <div class="panel" id="p4">
+      <div class="box">
+        <div class="lbl">SYNCHRONISATION SUPABASE</div>
+        <div id="sync-status-box" class="sync-status info">
+          Non configuré — vos données restent locales sur cet appareil.
+        </div>
+
+        <div class="sync-field">
+          <label>URL DU PROJET SUPABASE</label>
+          <input id="sb-url" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off" oninput="syncFieldChanged()">
+        </div>
+        <div class="sync-field">
+          <label>CLÉ ANON (clé publique)</label>
+          <input id="sb-key" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." autocomplete="off" oninput="syncFieldChanged()">
+        </div>
+        <div class="sync-field">
+          <label>IDENTIFIANT DE LISTE (partagez ce code avec vos amis)</label>
+          <div class="row">
+            <input id="sb-listid" type="text" placeholder="ex: famille-dupont" autocomplete="off" oninput="syncFieldChanged()" style="flex:1">
+            <button class="btn btn-sm" onclick="genListId()">Générer</button>
+          </div>
+        </div>
+        <button class="btn" id="btn-connect" onclick="connectSupabase()" style="width:100%">Connecter</button>
+        <button class="btn btn-sm" id="btn-disconnect" onclick="disconnectSupabase()" style="width:100%;display:none;border-color:rgba(168,68,68,.4);color:var(--red)">Déconnecter</button>
+
+        <hr class="hdiv">
+        <div class="sync-hint">
+          <strong style="color:rgba(255,255,255,.5)">Comment obtenir ces informations ?</strong><br>
+          1. Créez un compte gratuit sur supabase.com<br>
+          2. Nouveau projet → notez l'URL et la clé "anon"<br>
+          3. Ouvrez l'éditeur SQL et exécutez le script ci-dessous<br>
+          4. Collez URL + clé ici et cliquez Connecter
+        </div>
+        <div class="share-pre" style="font-size:11px;user-select:all;cursor:text" id="sql-script"></div>
+        <button class="btn btn-sm" onclick="copySQL()">Copier le script SQL</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="ov-order" onclick="maybeCloseOrder(event)">
+  <div class="modal">
+    <div class="modal-title">Ordre des rayons — glisser pour réordonner</div>
+    <div id="order-list"></div>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="closeOrder()">Fermer</button>
+  </div>
+</div>
+<div class="overlay" id="ov-bi" onclick="maybeCloseBI(event)">
+  <div class="modal">
+    <div class="modal-title">Détail estimations — Carrefour France 2025</div>
+    <div id="bi-rows"></div>
+    <div class="bi-note">Bas = MDD / premier prix · Haut = marque nationale<br>Arrondi au conditionnement entier supérieur.</div>
+    <button class="btn" style="width:100%;margin-top:4px" onclick="closeBI()">Fermer</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// UTILITAIRES
+// ═══════════════════════════════════════════════════════════════
+function nrm(s){
+  return String(s).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[\u2018\u2019\u02bc']/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function fmt(n){ return n.toFixed(2).replace('.',','); }
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('on');
+  clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('on');},2400);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BASE DE DONNÉES PRIX
+// [prix_bas, prix_haut, label_unité, poids_ref_g]
+// ═══════════════════════════════════════════════════════════════
+var DB = {
+  'tomate cerise':[2.5,4.5,'€/barq.',250],'tomate':[1.8,3.5,'€/kg',120],
+  'carotte':[0.9,1.8,'€/kg',100],'courgette':[1.5,2.8,'€/kg',250],
+  'poivron':[2.0,3.5,'€/kg',200],'aubergine':[2.0,3.2,'€/kg',300],
+  'brocoli':[1.8,2.8,'€/pièce',400],'chou-fleur':[1.5,2.5,'€/pièce',700],
+  'epinard':[1.8,3.0,'€/sachet',300],'salade':[1.0,1.8,'€/pièce',300],
+  'laitue':[1.0,1.8,'€/pièce',300],'mache':[1.5,2.5,'€/sachet',100],
+  'roquette':[1.5,2.5,'€/sachet',100],'poireau':[1.5,2.5,'€/kg',200],
+  'haricot vert':[2.0,3.5,'€/kg',500],'petit pois':[1.5,3.0,'€/kg',500],
+  'pois chiche':[0.9,2.0,'€/boîte',400],'lentille':[1.0,2.5,'€/kg',500],
+  'concombre':[0.8,1.5,'€/pièce',400],'radis':[0.8,1.5,'€/botte',200],
+  'betterave':[1.0,2.0,'€/kg',300],'asperge':[3.5,7.0,'€/botte',500],
+  'artichaut':[1.5,3.0,'€/pièce',300],'champignon':[2.0,3.5,'€/barq.',250],
+  'oignon':[0.8,1.5,'€/kg',100],'echalote':[2.0,3.5,'€/kg',50],
+  'ail':[1.5,3.0,'€/tête',40],'gingembre':[2.0,4.0,'€/100g',50],
+  'pomme de terre':[0.8,1.5,'€/kg',1000],'patate douce':[1.5,2.8,'€/kg',300],
+  'avocat':[0.9,1.8,'€/pièce',180],'fenouil':[1.2,2.2,'€/pièce',400],
+  'celeri':[1.5,2.5,'€/pied',500],'potimarron':[1.5,2.5,'€/kg',1200],
+  'courge':[1.5,3.0,'€/kg',1000],'piment':[1.5,3.0,'€/kg',30],
+  'mais':[0.5,1.2,'€/épi',300],'endive':[1.5,2.5,'€/kg',120],
+  'persil':[0.7,1.2,'€/botte',50],'basilic':[1.0,2.0,'€/pot',30],
+  'menthe':[0.8,1.5,'€/botte',30],'ciboulette':[0.8,1.5,'€/botte',30],
+  'thym':[0.8,1.5,'€/botte',25],'romarin':[0.8,1.5,'€/botte',25],
+  'estragon':[0.8,1.5,'€/botte',25],'coriandre':[0.8,1.5,'€/botte',25],
+  'pomme':[1.5,2.5,'€/kg',180],'poire':[1.8,3.0,'€/kg',180],
+  'banane':[1.2,1.8,'€/kg',120],'orange':[1.2,2.0,'€/kg',200],
+  'citron':[1.5,2.5,'€/filet',100],'lime':[0.5,1.0,'€/pièce',80],
+  'mandarine':[1.8,3.0,'€/kg',100],'clementine':[1.8,3.0,'€/kg',100],
+  'raisin':[2.5,4.5,'€/kg',1000],'fraise':[3.0,5.5,'€/barq.',250],
+  'framboise':[3.0,5.5,'€/barq.',125],'kiwi':[1.5,2.5,'€/kg',80],
+  'ananas':[1.5,3.0,'€/pièce',1000],'mangue':[1.5,3.0,'€/pièce',400],
+  'melon':[1.5,3.0,'€/pièce',1200],'pasteque':[1.0,2.0,'€/kg',3000],
+  'figue':[2.5,4.5,'€/barq.',200],'noix de coco':[1.5,2.5,'€/pièce',400],
+  'grenade':[1.5,3.0,'€/pièce',300],'abricot':[3.0,5.5,'€/kg',50],
+  'peche':[2.5,4.5,'€/kg',150],'nectarine':[2.5,4.5,'€/kg',150],
+  'cerise':[5.0,9.0,'€/kg',8],'myrtille':[3.5,6.0,'€/barq.',125],
+  'poulet':[5.0,10.0,'€/kg',1200],'boeuf':[10.0,18.0,'€/kg',500],
+  'veau':[12.0,20.0,'€/kg',400],'porc':[6.0,11.0,'€/kg',500],
+  'agneau':[12.0,22.0,'€/kg',500],'dinde':[6.0,10.0,'€/kg',600],
+  'canard':[8.0,15.0,'€/kg',800],'lapin':[7.0,13.0,'€/kg',800],
+  'jambon':[2.5,5.0,'€/paquet',200],'bacon':[2.0,4.0,'€/paquet',150],
+  'lardon':[1.5,3.0,'€/paquet',200],'saucisse':[2.5,4.5,'€/paquet',360],
+  'merguez':[3.0,5.0,'€/paquet',360],'chipolata':[2.5,4.5,'€/paquet',360],
+  'steak':[4.0,8.0,'€/paquet',300],'hache':[4.0,7.0,'€/paquet',400],
+  'escalope':[5.0,9.0,'€/paquet',300],'roti':[7.0,14.0,'€/pièce',800],
+  'chorizo':[2.0,4.5,'€/paquet',200],
+  'saumon':[7.0,14.0,'€/kg',400],'thon':[3.0,6.0,'€/boîte',160],
+  'cabillaud':[8.0,15.0,'€/kg',400],'dorade':[7.0,13.0,'€/pièce',400],
+  'crevette':[8.0,15.0,'€/kg',300],'moule':[2.0,4.0,'€/kg',1000],
+  'sardine':[1.5,3.5,'€/boîte',135],'maquereau':[1.5,3.0,'€/boîte',200],
+  'anchois':[2.0,4.5,'€/boîte',50],
+  'camembert':[2.0,4.0,'€/pièce',250],'brie':[3.0,6.0,'€/pièce',500],
+  'comte':[3.0,6.0,'€/200g',200],'emmental':[2.0,3.5,'€/paquet',400],
+  'gruyere':[2.0,3.5,'€/paquet',200],'mozzarella':[1.2,2.5,'€/boule',125],
+  'parmesan':[2.5,5.0,'€/100g',100],'ricotta':[1.5,2.8,'€/250g',250],
+  'mascarpone':[1.8,3.0,'€/250g',250],'feta':[2.0,4.0,'€/200g',200],
+  'chevre':[2.0,4.5,'€/pièce',120],'reblochon':[3.0,5.5,'€/pièce',450],
+  'raclette':[3.5,6.5,'€/paquet',400],'fromage blanc':[1.5,2.5,'€/500g',500],
+  'roquefort':[3.0,6.0,'€/200g',200],'gorgonzola':[3.0,6.0,'€/200g',200],
+  'lait':[0.9,1.5,'€/L',1000],'beurre':[2.0,4.0,'€/250g',250],
+  'creme fraiche':[1.0,2.0,'€/200g',200],'creme liquide':[1.0,2.0,'€/200ml',200],
+  'creme':[1.0,2.0,'€/200ml',200],'yaourt':[2.0,3.5,'€/pack',500],
+  'oeuf':[2.5,4.5,'€/boîte 12',660],'margarine':[1.5,3.0,'€/250g',250],
+  'pain de mie':[1.2,2.5,'€/paquet',500],'pate feuilletee':[1.5,2.5,'€/rouleau',230],
+  'pate brisee':[1.0,2.0,'€/rouleau',230],'pain':[0.9,1.8,'€/pièce',400],
+  'baguette':[0.9,1.3,'€/pièce',250],'brioche':[2.0,3.5,'€/pièce',400],
+  'croissant':[0.9,1.5,'€/pièce',80],
+  'flocons d avoine':[1.5,2.8,'€/kg',1000],'spaghetti':[0.8,2.5,'€/500g',500],
+  'linguine':[1.0,2.8,'€/500g',500],'tagliatelle':[1.0,2.8,'€/500g',500],
+  'penne':[0.8,2.5,'€/500g',500],'fusilli':[0.8,2.5,'€/500g',500],
+  'lasagne':[1.0,3.0,'€/500g',500],'gnocchi':[1.2,2.5,'€/500g',500],
+  'pates':[0.8,2.5,'€/500g',500],'riz':[0.9,2.5,'€/kg',1000],
+  'quinoa':[2.5,4.5,'€/500g',500],'boulgour':[2.0,3.5,'€/500g',500],
+  'semoule':[1.0,2.0,'€/kg',1000],'couscous':[1.0,2.0,'€/500g',500],
+  'farine':[0.8,1.8,'€/kg',1000],'polenta':[1.5,2.5,'€/kg',1000],
+  'cereales':[2.5,5.0,'€/boîte',375],
+  'huile d olive':[3.5,8.0,'€/L',1000],'huile de tournesol':[2.0,4.0,'€/L',1000],
+  'huile de sesame':[3.0,6.0,'€/250ml',250],'huile':[2.0,5.0,'€/L',1000],
+  'sel':[0.4,1.2,'€/kg',1000],'poivre':[1.5,3.5,'€/flacon',50],
+  'sucre':[1.2,2.0,'€/kg',1000],'miel':[3.0,6.0,'€/500g',500],
+  'confiture':[2.0,4.0,'€/pot',370],'pesto':[2.0,4.5,'€/pot',190],
+  'concentre de tomate':[0.8,2.0,'€/tube',200],'tomate pelee':[0.8,1.8,'€/boîte',400],
+  'olive':[2.0,4.0,'€/pot',180],'cornichon':[1.5,2.8,'€/pot',200],
+  'moutarde':[1.2,2.5,'€/pot',200],'mayonnaise':[1.5,3.0,'€/tube',320],
+  'ketchup':[1.5,2.8,'€/flacon',560],'sauce soja':[1.5,3.0,'€/flacon',150],
+  'vinaigre balsamique':[2.0,5.0,'€/flacon',250],'vinaigre de cidre':[1.5,3.0,'€/flacon',500],
+  'vinaigre':[0.8,2.0,'€/flacon',500],'bouillon':[1.5,2.5,'€/pack',72],
+  'cumin':[1.0,2.5,'€/flacon',40],'curcuma':[1.0,2.5,'€/flacon',40],
+  'paprika':[1.0,2.5,'€/flacon',50],'curry':[1.0,2.5,'€/flacon',40],
+  'cannelle':[1.0,2.5,'€/flacon',30],'muscade':[1.5,3.0,'€/flacon',30],
+  'levure':[0.5,1.5,'€/sachet',11],'noix':[3.0,6.0,'€/200g',200],
+  'noisette':[2.5,5.0,'€/200g',200],'amande':[3.0,6.0,'€/200g',200],
+  'pistache':[3.5,7.0,'€/150g',150],'chapelure':[1.0,2.0,'€/500g',500],
+  'maizena':[1.0,2.0,'€/250g',250],'nutella':[3.5,5.5,'€/400g',400],
+  'pate a tartiner':[2.5,5.5,'€/400g',400],'speculoos':[1.5,3.0,'€/paquet',250],
+  'oreo':[2.0,3.5,'€/paquet',154],'biscuit':[1.5,3.5,'€/paquet',200],
+  'cookie':[1.5,3.5,'€/paquet',200],'madeleine':[1.5,3.0,'€/paquet',300],
+  'palmier':[1.5,3.0,'€/paquet',200],'chips':[1.5,3.5,'€/paquet',150],
+  'pringles':[2.0,3.5,'€/boîte',185],'pop corn':[1.5,3.0,'€/paquet',100],
+  'cacahuete':[1.5,3.5,'€/paquet',200],'noix de cajou':[2.5,5.0,'€/paquet',150],
+  'kinder':[1.5,4.0,'€/paquet',100],'haribo':[1.5,3.0,'€/sachet',200],
+  'carambar':[1.5,2.5,'€/sachet',120],
+  'coca-cola':[1.5,3.5,'€/1.5L',1500],'coca cola':[1.5,3.5,'€/1.5L',1500],
+  'pepsi':[1.2,3.0,'€/1.5L',1500],'fanta':[1.2,3.0,'€/1.5L',1500],
+  'sprite':[1.2,3.0,'€/1.5L',1500],'orangina':[1.5,3.0,'€/1.5L',1500],
+  'oasis':[1.2,2.8,'€/1.5L',1500],'schweppes':[1.5,3.0,'€/1L',1000],
+  'redbull':[1.5,2.5,'€/25cl',250],'red bull':[1.5,2.5,'€/25cl',250],
+  'monster':[1.5,2.5,'€/50cl',500],'perrier':[1.0,2.0,'€/75cl',750],
+  'badoit':[0.8,1.8,'€/1L',1000],'evian':[0.5,1.5,'€/1.5L',1500],
+  'volvic':[0.5,1.5,'€/1.5L',1500],'cristaline':[0.3,0.8,'€/1.5L',1500],
+  'vittel':[0.5,1.5,'€/1.5L',1500],'tropicana':[2.0,3.5,'€/1L',1000],
+  'innocent':[2.5,4.0,'€/90cl',900],'nescafe':[3.0,7.0,'€/200g',200],
+  'kronenbourg':[5.0,9.0,'€/pack 6',198],'heineken':[6.0,10.0,'€/pack 6',198],
+  'leffe':[6.0,11.0,'€/pack 6',198],'grimbergen':[6.0,11.0,'€/pack 6',198],
+  'ricard':[18.0,25.0,'€/70cl',700],'pastis':[8.0,18.0,'€/70cl',700],
+  'whisky':[15.0,35.0,'€/70cl',700],'rhum':[12.0,25.0,'€/70cl',700],
+  'vodka':[10.0,25.0,'€/70cl',700],'gin':[12.0,28.0,'€/70cl',700],
+  'eau gazeuse':[0.3,1.0,'€/1.5L',1500],'eau':[0.2,0.8,'€/1.5L',1500],
+  'jus d orange':[1.5,3.5,'€/L',1000],'jus de pomme':[1.0,2.5,'€/L',1000],
+  'cafe':[3.0,8.0,'€/250g',250],'the':[2.0,4.5,'€/boîte',25],
+  'vin rouge':[4.0,12.0,'€/btl',750],'vin blanc':[4.0,12.0,'€/btl',750],
+  'vin rose':[4.0,10.0,'€/btl',750],'vin':[4.0,12.0,'€/btl',750],
+  'biere':[5.0,10.0,'€/pack',2000],'cidre':[3.0,6.0,'€/btl',750],
+  'lait d amande':[1.5,2.8,'€/L',1000],'lait de coco':[1.0,2.0,'€/400ml',400],
+  'lait de soja':[1.0,2.0,'€/L',1000],'lait d avoine':[1.5,2.8,'€/L',1000],
+  'haagen dazs':[4.0,7.0,'€/pot',460],'ben jerry':[4.5,7.0,'€/pot',465],
+  'carte d or':[3.0,5.5,'€/pot',900],'mccain':[2.0,4.0,'€/paquet',600],
+  'glace':[2.0,5.0,'€/pot',500],'sorbet':[2.0,4.5,'€/pot',500],
+  'papier toilette':[3.0,7.0,'€/pack',800],'lessive':[5.0,12.0,'€/paquet',2000],
+  'liquide vaisselle':[1.5,3.5,'€/flacon',500],'shampoing':[2.0,7.0,'€/flacon',400],
+  'gel douche':[1.5,5.0,'€/flacon',400],'savon':[1.0,3.5,'€/pièce',100],
+  'dentifrice':[1.5,4.0,'€/tube',100],'deodorant':[2.0,5.0,'€/pièce',150],
+  'rasoir':[3.0,8.0,'€/pièce',80]
+};
+var DB_KEYS = Object.keys(DB).sort(function(a,b){return b.length-a.length;});
+
+// ═══════════════════════════════════════════════════════════════
+// CATÉGORIES
+// ═══════════════════════════════════════════════════════════════
+var CATS = [
+  {id:'fl',name:'Fruits & Légumes',  emoji:'🥦'},
+  {id:'vi',name:'Viandes',           emoji:'🥩'},
+  {id:'po',name:'Poissons',          emoji:'🐟'},
+  {id:'fr',name:'Fromages & Frais',  emoji:'🧀'},
+  {id:'la',name:'Produits laitiers', emoji:'🥛'},
+  {id:'bo',name:'Boulangerie',       emoji:'🥖'},
+  {id:'fe',name:'Féculents',         emoji:'🌾'},
+  {id:'co',name:'Épicerie & Snacks', emoji:'🥫'},
+  {id:'bv',name:'Boissons',          emoji:'🧃'},
+  {id:'su',name:'Surgelés',          emoji:'❄️'},
+  {id:'br',name:'Bricolage',         emoji:'🔧'},
+  {id:'sa',name:'Santé',             emoji:'💊'},
+  {id:'hy',name:'Hygiène',           emoji:'🧴'},
+  {id:'an',name:'Animaux',           emoji:'🐾'},
+  {id:'au',name:'Autre',             emoji:'🛒'},
+];
+var KW = {
+  fl:['pomme de terre','tomate cerise','tomate','salade','laitue','carotte','courgette','poivron','aubergine','brocoli','chou-fleur','epinard','poireau','haricot vert','petit pois','pois chiche','lentille','mais','concombre','radis','betterave','asperge','artichaut','fenouil','celeri','courge','champignon','oignon','echalote','ail','gingembre','roquette','mache','endive','patate douce','piment','persil','ciboulette','estragon','menthe','basilic','thym','romarin','coriandre','pomme','poire','banane','orange','citron','lime','mandarine','clementine','raisin','fraise','framboise','myrtille','abricot','peche','nectarine','cerise','kiwi','ananas','mangue','melon','pasteque','figue','avocat','noix de coco','grenade','groseille','cassis'],
+  vi:['poulet','boeuf','veau','porc','agneau','dinde','canard','lapin','saucisse','merguez','chipolata','jambon','bacon','lardon','steak','escalope','cotelette','entrecote','roti','hache','foie','boudin','chorizo','salami','pancetta'],
+  po:['saumon','thon','cabillaud','merlu','sole','dorade','bar','sardine','maquereau','hareng','truite','colin','rouget','lotte','crevette','gambas','langouste','homard','crabe','moule','huitre','palourde','poulpe','calmar','anchois','fletan','turbot'],
+  fr:['camembert','brie','comte','emmental','gruyere','cheddar','gouda','mozzarella','parmesan','ricotta','mascarpone','boursin','roquefort','gorgonzola','feta','chevre','reblochon','munster','tomme','raclette','beaufort','cantal','mimolette','fromage blanc','fromage frais'],
+  la:['lait','beurre','creme fraiche','creme liquide','creme','yaourt','skyr','oeuf','margarine'],
+  bo:['pate feuilletee','pate brisee','pain de mie','pain','baguette','brioche','croissant','pain au chocolat','focaccia','naan','pita','tortilla','bagel'],
+  fe:['flocons d avoine','linguine','spaghetti','tagliatelle','penne','fusilli','rigatoni','farfalle','lasagne','ravioli','gnocchi','pates','riz','quinoa','boulgour','semoule','couscous','polenta','maizena','farine','cereales','granola'],
+  co:['huile d olive','huile de tournesol','huile de sesame','tomate pelee','concentre de tomate','vinaigre balsamique','vinaigre de cidre','pate a tartiner','noix de cajou','sauce soja','olive','cornichon','capre','bouillon','ketchup','mayonnaise','moutarde','vinaigre','huile','sel','poivre','cumin','curcuma','paprika','curry','cannelle','muscade','levure','sucre','miel','confiture','pesto','noix','noisette','amande','pistache','chapelure','maizena','nutella','speculoos','oreo','biscuit','cookie','madeleine','palmier','chips','pringles','pop corn','cacahuete','kinder','haribo','carambar'],
+  bv:['coca-cola','coca cola','red bull','jus d orange','jus de pomme','lait d amande','lait de soja','lait d avoine','lait de coco','vin rouge','vin blanc','vin rose','eau gazeuse','pepsi','fanta','sprite','orangina','oasis','schweppes','redbull','monster','perrier','badoit','evian','volvic','cristaline','vittel','tropicana','innocent','nescafe','kronenbourg','heineken','leffe','grimbergen','ricard','pastis','whisky','rhum','vodka','gin','eau','the','cafe','tisane','biere','vin','cidre','champagne'],
+  su:['haagen dazs','ben jerry','carte d or','mccain','pizza surgele','poisson pane','nuggets','frites surgele','legumes surgele','glace','sorbet'],
+  br:['vis','boulon','colle','peinture','ampoule','pile','batterie','tournevis','marteau','perceuse','scie','ruban adhesif','white spirit'],
+  sa:['doliprane','paracetamol','ibuprofene','nurofen','aspirine','advil','pansement','antiseptique','betadine','serum physiologique','spray nasal','collyre','creme solaire','vitamines'],
+  hy:['papier toilette','liquide vaisselle','shampoing','apres shampoing','gel douche','savon','deodorant','dentifrice','brosse a dents','rasoir','mouchoir','lessive','adoucissant','javel','bicarbonate'],
+  an:['royal canin','purina','whiskas','friskies','pedigree','croquette','pate pour chat','pate pour chien','nourriture chat','nourriture chien','litiere','jouet chat','jouet chien','laisse','collier'],
+  au:[]
+};
+Object.keys(KW).forEach(function(k){KW[k].sort(function(a,b){return b.length-a.length;});});
+
+// ═══════════════════════════════════════════════════════════════
+// MOTEUR PRIX
+// ═══════════════════════════════════════════════════════════════
+function lookupDB(name){
+  var n=nrm(name);
+  for(var i=0;i<DB_KEYS.length;i++){
+    if(n.indexOf(nrm(DB_KEYS[i]))!==-1) return {key:DB_KEYS[i],d:DB[DB_KEYS[i]]};
+  }
+  return null;
+}
+function parseMult(qtyStr,itemName){
+  if(!qtyStr||!qtyStr.trim()) return {mult:1,label:''};
+  var s=qtyStr.trim().toLowerCase().replace(',','.');
+  var e=lookupDB(itemName); var refG=e?e.d[3]:null;
+  var massM=s.match(/^(\d+(?:\.\d+)?)\s*(g|kg|mg)$/);
+  if(massM){
+    var v=parseFloat(massM[1]),u=massM[2];
+    var g=u==='kg'?v*1000:u==='mg'?v/1000:v;
+    if(refG&&refG>0){var u2=Math.max(1,Math.ceil(g/refG));return {mult:u2,label:g+'g \u2192 \xd7'+u2};}
+    return {mult:1,label:''};
+  }
+  var volM=s.match(/^(\d+(?:\.\d+)?)\s*(ml|cl|dl|l)$/);
+  if(volM){
+    var v2=parseFloat(volM[1]),u3=volM[2];
+    var ml=u3==='l'?v2*1000:u3==='dl'?v2*100:u3==='cl'?v2*10:v2;
+    if(refG&&refG>0){var u4=Math.max(1,Math.ceil(ml/refG));return {mult:u4,label:ml+'ml \u2192 \xd7'+u4};}
+    return {mult:1,label:''};
+  }
+  var numM=s.match(/^x?(\d+(?:\.\d+)?)$/);
+  if(numM){var n2=Math.ceil(parseFloat(numM[1]));if(!isNaN(n2)&&n2>0&&n2<=200)return {mult:n2,label:n2>1?'\xd7'+n2:''};}
+  return {mult:1,label:''};
+}
+function calcPrice(item){
+  var e=lookupDB(item.name); if(!e) return null;
+  var pm=parseMult(item.qty,item.name);
+  return {lo:e.d[0]*pm.mult,hi:e.d[1]*pm.mult,unit:e.d[2],mult:pm.mult,label:pm.label};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DÉTECTION CATÉGORIE
+// ═══════════════════════════════════════════════════════════════
+function detectCat(name){
+  var n=nrm(name);
+  for(var oi=0;oi<catOrder.length;oi++){
+    var id=catOrder[oi]; if(id==='au') continue;
+    var list=KW[id]||[];
+    for(var ki=0;ki<list.length;ki++){if(n.indexOf(nrm(list[ki]))!==-1) return id;}
+  }
+  return 'au';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ÉTAT & PERSISTANCE
+// ═══════════════════════════════════════════════════════════════
+var items   = JSON.parse(localStorage.getItem('crs_items')||'[]');
+var favs    = JSON.parse(localStorage.getItem('crs_favs') ||'[]');
+var catOrder= (function(){
+  var saved=JSON.parse(localStorage.getItem('crs_order')||'null');
+  var all=CATS.map(function(c){return c.id;});
+  if(!saved) return all;
+  var missing=all.filter(function(id){return saved.indexOf(id)===-1&&id!=='au';});
+  return saved.filter(function(id){return id!=='au';}).concat(missing).concat(['au']);
+})();
+var sbCfg   = JSON.parse(localStorage.getItem('crs_sbcfg')||'null');
+var collapsed={}, encours=false, editId=null, selFavs={}, activeTab=0;
+var supabase=null, syncChannel=null, syncPaused=false;
+
+function save(){
+  localStorage.setItem('crs_items',JSON.stringify(items));
+  localStorage.setItem('crs_favs', JSON.stringify(favs));
+  localStorage.setItem('crs_order',JSON.stringify(catOrder));
+}
+function orderedCats(){
+  return catOrder.map(function(id){return CATS.find(function(c){return c.id===id;});}).filter(Boolean);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE SYNC
+// ═══════════════════════════════════════════════════════════════
+var SQL_SCRIPT =
+"-- Coller dans l'éditeur SQL de Supabase\n"+
+"create table if not exists liste_courses (\n"+
+"  list_id text not null,\n"+
+"  data    jsonb not null,\n"+
+"  updated_at timestamptz default now()\n"+
+");\n"+
+"create unique index if not exists\n"+
+"  liste_courses_list_id_idx on liste_courses(list_id);\n"+
+"alter table liste_courses enable row level security;\n"+
+"create policy \"public read write\" on liste_courses\n"+
+"  for all using (true) with check (true);";
+
+document.getElementById('sql-script').textContent = SQL_SCRIPT;
+
+function setSyncStatus(type, msg){
+  var box=document.getElementById('sync-status-box');
+  box.className='sync-status '+type;
+  box.textContent=msg;
+}
+function setSyncDot(color){
+  var dot=document.getElementById('sync-dot');
+  dot.className='on '+(color||'');
+  if(!color) dot.className='';
+}
+function setSyncIcon(connected){
+  document.getElementById('sync-btn').className=connected?'connected':'';
+  setSyncDot(connected?'green':'orange');
+}
+
+async function pushToSupabase(){
+  if(!supabase||!sbCfg) return;
+  var payload={list_id:sbCfg.listId, data:{items:items,favs:favs,catOrder:catOrder}, updated_at:new Date().toISOString()};
+  try{
+    var r=await fetch(sbCfg.url+'/rest/v1/liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listId),{
+      method:'GET',headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key,'Content-Type':'application/json'}
+    });
+    var existing=await r.json();
+    var method=existing&&existing.length>0?'PATCH':'POST';
+    var url=sbCfg.url+'/rest/v1/liste_courses'+(method==='PATCH'?'?list_id=eq.'+encodeURIComponent(sbCfg.listId):'');
+    await fetch(url,{method:method,headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)});
+  } catch(e){ console.warn('push error',e); }
+}
+
+async function pullFromSupabase(){
+  if(!supabase||!sbCfg) return false;
+  try{
+    var r=await fetch(sbCfg.url+'/rest/v1/liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listId),{
+      headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key}
+    });
+    var rows=await r.json();
+    if(rows&&rows.length>0&&rows[0].data){
+      var d=rows[0].data;
+      if(d.items) items=d.items;
+      if(d.favs)  favs=d.favs;
+      if(d.catOrder) catOrder=d.catOrder;
+      save(); return true;
+    }
+  } catch(e){ console.warn('pull error',e); }
+  return false;
+}
+
+function startRealtimeSync(){
+  if(!sbCfg) return;
+  if(syncChannel){ try{syncChannel.unsubscribe();}catch(e){} }
+  syncChannel=null;
+  // Polling léger toutes les 8s (fallback universel sans librairie Supabase)
+  clearInterval(window._syncInterval);
+  window._syncInterval=setInterval(async function(){
+    if(syncPaused) return;
+    var changed=await pullFromSupabase();
+    if(changed){ renderList(); renderFavs(); }
+  },8000);
+}
+
+async function connectSupabase(){
+  var url=document.getElementById('sb-url').value.trim().replace(/\/$/,'');
+  var key=document.getElementById('sb-key').value.trim();
+  var listId=document.getElementById('sb-listid').value.trim();
+  if(!url||!key||!listId){setSyncStatus('err','Tous les champs sont requis.');return;}
+
+  setSyncStatus('info','Connexion en cours…');
+  document.getElementById('btn-connect').textContent='Connexion…';
+
+  try{
+    var r=await fetch(url+'/rest/v1/liste_courses?limit=1',{
+      headers:{'apikey':key,'Authorization':'Bearer '+key}
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+  } catch(e){
+    setSyncStatus('err','Erreur de connexion. Vérifiez l\'URL et la clé.\n'+e.message);
+    document.getElementById('btn-connect').textContent='Connecter';
+    setSyncDot('red');
+    return;
+  }
+
+  sbCfg={url:url,key:key,listId:listId};
+  supabase=true;
+  localStorage.setItem('crs_sbcfg',JSON.stringify(sbCfg));
+
+  // Pull initial puis push si vide
+  var pulled=await pullFromSupabase();
+  if(!pulled) await pushToSupabase();
+
+  setSyncStatus('ok','✓ Connecté — synchronisation active\nListe : '+listId);
+  setSyncIcon(true);
+  document.getElementById('btn-connect').style.display='none';
+  document.getElementById('btn-disconnect').style.display='block';
+  document.getElementById('setup-banner').classList.add('hide');
+  startRealtimeSync();
+  renderList(); renderFavs();
+  toast('☁️ Synchronisation active !');
+}
+
+function disconnectSupabase(){
+  clearInterval(window._syncInterval);
+  supabase=null; sbCfg=null; syncChannel=null;
+  localStorage.removeItem('crs_sbcfg');
+  setSyncStatus('info','Non configuré — vos données restent locales sur cet appareil.');
+  setSyncIcon(false);
+  setSyncDot('orange');
+  document.getElementById('btn-connect').style.display='block';
+  document.getElementById('btn-connect').textContent='Connecter';
+  document.getElementById('btn-disconnect').style.display='none';
+  document.getElementById('setup-banner').classList.remove('hide');
+  toast('Synchronisation désactivée');
+}
+
+function syncFieldChanged(){
+  document.getElementById('btn-connect').textContent='Connecter';
+}
+function genListId(){
+  var words=['courses','marche','maison','famille','cuisine','panier','liste'];
+  var w=words[Math.floor(Math.random()*words.length)];
+  document.getElementById('sb-listid').value=w+'-'+Math.random().toString(36).slice(2,6);
+}
+function copySQL(){
+  navigator.clipboard.writeText(SQL_SCRIPT);
+  toast('Script SQL copié !');
+}
+
+// Sauvegarde + push après chaque modification
+function saveAndSync(){
+  save();
+  if(supabase&&sbCfg){
+    syncPaused=true;
+    pushToSupabase().then(function(){syncPaused=false;});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ONGLETS
+// ═══════════════════════════════════════════════════════════════
+function gotoTab(i){
+  activeTab=i;
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',j===i);});
+  document.querySelectorAll('.panel').forEach(function(p,j){p.classList.toggle('on',j===i);});
+  if(i===0) renderList();
+  if(i===1){renderFavs();renderSuggs('');}
+  if(i===3) renderShare();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BUDGET
+// ═══════════════════════════════════════════════════════════════
+function computeBudget(){
+  var pending=items.filter(function(x){return !x.done;});
+  if(!pending.length) return null;
+  var lo=0,hi=0,found=0,unknown=[];
+  pending.forEach(function(item){
+    var p=calcPrice(item);
+    if(p){lo+=p.lo;hi+=p.hi;found++;}
+    else unknown.push(item.name);
+  });
+  return {lo:lo,hi:hi,found:found,total:pending.length,unknown:unknown};
+}
+function renderBudget(){
+  var b=computeBudget();
+  var el=document.getElementById('budget');
+  if(!b||b.total===0){el.classList.add('hide');return;}
+  el.classList.remove('hide');
+  document.getElementById('b-range').textContent=
+    (b.lo===0&&b.hi===0)?'Non estimable':fmt(b.lo)+' \u20ac \u2013 '+fmt(b.hi)+' \u20ac';
+  var pct=Math.round(b.found/b.total*100);
+  var det=b.found+'/'+b.total+' articles estim\xe9s ('+pct+'%)';
+  if(b.unknown.length>0&&b.unknown.length<=3) det+=' \xb7 non estim\xe9s\u00a0: '+b.unknown.join(', ');
+  else if(b.unknown.length>3) det+=' \xb7 '+b.unknown.length+' non estim\xe9s';
+  document.getElementById('b-detail').textContent=det;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDU LISTE
+// ═══════════════════════════════════════════════════════════════
+function renderList(){
+  var done=items.filter(function(x){return x.done;}).length;
+  var total=items.length;
+  document.getElementById('counter').textContent=total+' article'+(total!==1?'s':'')+' \xb7 '+done+' fait'+(done!==1?'s':'');
+  document.getElementById('prog-bar').style.width=total>0?Math.round(done/total*100)+'%':'0%';
+  document.getElementById('btn-encours').classList.toggle('on',encours);
+  renderBudget();
+  var ctn=document.getElementById('list-container');
+  var empty=document.getElementById('empty');
+  ctn.innerHTML=''; var hasAny=false;
+  orderedCats().forEach(function(cat){
+    var ci=items.filter(function(x){return x.cat===cat.id;});
+    if(!ci.length) return;
+    var vis=encours?ci.filter(function(x){return !x.done;}):ci;
+    if(!vis.length) return;
+    hasAny=true;
+    var sec=document.createElement('div');
+    sec.className='cat-sec'+(collapsed[cat.id]?' col':'');
+    var hdr=document.createElement('div'); hdr.className='cat-hdr';
+    hdr.innerHTML='<span class="cat-em">'+cat.emoji+'</span><span class="cat-nm">'+cat.name+'</span><span class="cat-ct">'+vis.length+'</span><span class="cat-arr">\u25be</span>';
+    hdr.onclick=(function(id){return function(){collapsed[id]=!collapsed[id];renderList();};})(cat.id);
+    sec.appendChild(hdr);
+    if(!collapsed[cat.id]){
+      var wrap=document.createElement('div'); wrap.className='cat-items';
+      vis.forEach(function(item){wrap.appendChild(editId===item.id?buildEdit(item):buildCard(item));});
+      sec.appendChild(wrap);
+    }
+    ctn.appendChild(sec);
+  });
+  empty.style.display=hasAny?'none':'flex';
+}
+
+function buildCard(item){
+  var card=document.createElement('div');
+  card.className='item'+(item.done?' done':'');
+  card.dataset.id=item.id;
+  var chk=document.createElement('button'); chk.className='chk'+(item.done?' on':'');
+  chk.onclick=(function(it){return function(){it.done=!it.done;saveAndSync();renderList();};})(item);
+  var nm=document.createElement('span'); nm.className='i-name'; nm.textContent=item.name;
+  nm.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);
+  var qty=document.createElement('span'); qty.className='i-qty'; qty.textContent=item.qty||'';
+  qty.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);
+  var priceEl=document.createElement('span'); priceEl.className='i-price';
+  var p=calcPrice(item);
+  if(p&&p.lo>0) priceEl.textContent='~'+Math.round(p.lo)+'-'+Math.round(p.hi)+'\u20ac';
+  var del=document.createElement('button'); del.className='i-del'; del.innerHTML='\xd7';
+  del.onclick=(function(id){return function(){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();};})(item.id);
+  card.append(chk,nm,qty,priceEl,del);
+  // Swipe
+  var sx=0,dx=0,sw=false;
+  card.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;dx=0;sw=false;},{passive:true});
+  card.addEventListener('touchmove',function(e){dx=e.touches[0].clientX-sx;if(Math.abs(dx)>10){sw=true;card.style.transform='translateX('+Math.min(0,dx)+'px)';card.classList.toggle('swiping',dx<-50);}},{passive:true});
+  card.addEventListener('touchend',(function(id){return function(){if(sw&&dx<-80){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();}else{card.style.transform='';card.classList.remove('swiping');}};})(item.id));
+  return card;
+}
+
+function buildEdit(item){
+  var card=document.createElement('div'); card.className='editcard';
+  var ni=document.createElement('input'); ni.className='en'; ni.value=item.name; ni.placeholder='Nom';
+  var qi=document.createElement('input'); qi.className='eq'; qi.value=item.qty||''; qi.placeholder='Qté';
+  var ok=document.createElement('button'); ok.className='eok'; ok.textContent='\u2713';
+  var cx=document.createElement('button'); cx.className='ecx'; cx.textContent='\u2715';
+  function doConfirm(){var v=ni.value.trim();if(v){item.name=v;item.qty=qi.value.trim();item.cat=detectCat(v);}editId=null;saveAndSync();renderList();}
+  function doCancel(){editId=null;renderList();}
+  ok.onclick=doConfirm; cx.onclick=doCancel;
+  ni.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};
+  qi.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};
+  card.append(ni,qi,ok,cx); setTimeout(function(){ni.focus();},40);
+  return card;
+}
+
+function toggleEncours(){encours=!encours;renderList();}
+function clearDone(){items=items.filter(function(x){return !x.done;});saveAndSync();renderList();toast('Articles faits supprim\xe9s');}
+
+// ═══════════════════════════════════════════════════════════════
+// SUGGESTIONS & AJOUT
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('in-name').addEventListener('input',function(){renderSuggs(this.value);});
+document.getElementById('in-name').addEventListener('keydown',function(e){if(e.key==='Enter')addFromInput();});
+
+function renderSuggs(v){
+  var box=document.getElementById('suggs');
+  if(!v.trim()){box.style.display='none';return;}
+  var nv=nrm(v),hits=[];
+  CATS.forEach(function(cat){(KW[cat.id]||[]).forEach(function(kw){if(nrm(kw).indexOf(nv)!==-1&&hits.length<6)hits.push({kw:kw,cat:cat});});});
+  if(!hits.length){box.style.display='none';return;}
+  box.style.display='block'; box.innerHTML='';
+  hits.forEach(function(h){
+    var d=document.createElement('div'); d.className='sugg';
+    var e=lookupDB(h.kw);
+    var ps=e?fmt(e.d[0])+'\u2013'+fmt(e.d[1])+' '+e.d[2]:'';
+    d.innerHTML='<span>'+h.kw+'</span><span class="sugg-cat">'+h.cat.emoji+'</span>'+(ps?'<span class="sugg-price">'+ps+'</span>':'');
+    d.onclick=(function(kw){return function(){document.getElementById('in-name').value=kw;box.style.display='none';};})(h.kw);
+    box.appendChild(d);
+  });
+}
+
+function addFromInput(){
+  var n=document.getElementById('in-name').value.trim();
+  var q=document.getElementById('in-qty').value.trim();
+  if(!n) return;
+  addItem(n,q,true);
+  document.getElementById('in-name').value='';
+  document.getElementById('in-qty').value='';
+  document.getElementById('suggs').style.display='none';
+  renderFavs(); toast('"'+n+'" ajout\xe9');
+}
+function addItem(name,qty,saveFav){
+  var existing=items.find(function(x){return nrm(x.name)===nrm(name);});
+  if(existing){existing.qty=qty||existing.qty;saveAndSync();if(activeTab===0)renderList();return;}
+  items.push({id:uid(),name:name,qty:qty||'',cat:detectCat(name),done:false});
+  if(saveFav&&favs.indexOf(name)===-1) favs.push(name);
+  saveAndSync(); if(activeTab===0) renderList();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FAVORIS
+// ═══════════════════════════════════════════════════════════════
+function renderFavs(){
+  var list=document.getElementById('favs-list'); list.innerHTML='';
+  if(!favs.length){
+    list.innerHTML='<div style="font-family:Courier New,monospace;font-size:11px;color:rgba(255,255,255,.28);padding:4px 2px">Aucun favori encore</div>';
+  } else {
+    favs.forEach(function(name){
+      var row=document.createElement('div'); row.className='fav';
+      var nm=document.createElement('span'); nm.className='fav-nm'; nm.textContent=name;
+      var dl=document.createElement('button'); dl.className='fav-del'; dl.textContent='\xd7';
+      dl.onclick=(function(n){return function(){favs=favs.filter(function(f){return f!==n;});delete selFavs[n];saveAndSync();renderFavs();};})(name);
+      var ck=document.createElement('button'); ck.className='fav-chk'+(selFavs[name]?' on':'');
+      ck.onclick=(function(n){return function(){selFavs[n]=!selFavs[n];renderFavs();};})(name);
+      row.append(nm,dl,ck); list.appendChild(row);
+    });
+  }
+  var n=Object.keys(selFavs).filter(function(k){return selFavs[k];}).length;
+  var btn=document.getElementById('btn-favs'); btn.disabled=n===0;
+  btn.textContent='Ajouter '+n+' article'+(n!==1?'s':'')+' \xe0 la liste';
+}
+function addSelFavs(){
+  var sel=Object.keys(selFavs).filter(function(k){return selFavs[k];});
+  sel.forEach(function(name){addItem(name,'',false);});
+  toast(sel.length+' article'+(sel.length>1?'s':'')+' ajout\xe9'+(sel.length>1?'s':''));
+  selFavs={}; renderFavs(); renderList();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMPORT RECETTE
+// ═══════════════════════════════════════════════════════════════
+var NOISE=['rape','hache','frais','fraiche','emince','vert','verts','jaune','rouge','surgele','cuit','cru','entier','fin','gros','moulu','broye','blanc','noir','bio','extra','epais'];
+var ARTCL=['de la','du','d','des','le','la','les','l','un','une','en','au','aux','de'];
+var CONT=['gousse','tranche','filet','branche','botte','brin','zeste','cube','rondelle','quartier','morceau','tige','feuille','tete','bouquet','boite','sachet','pot'];
+function parseLine(line){
+  line=line.replace(/^[\-\u2022*\u00b7\u2013\u2014>]+\s*/,'').replace(/[\u2018\u2019\u02bc']/g,' ').replace(/\(.*?\)/g,'').trim();
+  if(!line) return null;
+  var qty='';
+  var qm=line.match(/^(\d[\d.,\/]*\s*(?:g|kg|ml|l|cl|dl)?)\s+/i);
+  if(qm){qty=qm[1].trim();line=line.slice(qm[0].length);}
+  var n=nrm(line);
+  ARTCL.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(a){n=n.replace(new RegExp('^'+nrm(a)+'\\s+'),'');});
+  for(var ci=0;ci<CONT.length;ci++){var cm=n.match(new RegExp('(^|\\s)'+nrm(CONT[ci])+'s?\\s+(d |de |du |de la |des |d )?'));if(cm){var rest=n.slice(cm.index+cm[0].length).trim();if(rest){n=rest;break;}}}
+  ARTCL.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(a){n=n.replace(new RegExp('^'+nrm(a)+'\\s+'),'');});
+  var words=n.split(/\s+/).filter(function(w){return NOISE.indexOf(w)===-1&&ARTCL.indexOf(w)===-1&&w.length>0;});
+  var name=words.join(' ').trim();
+  if(!name) return null;
+  name=name.charAt(0).toUpperCase()+name.slice(1);
+  return {name:name,qty:qty};
+}
+function importRecipe(){
+  var text=document.getElementById('recipe-area').value;
+  var added=0;
+  text.split(/[\n;]/).forEach(function(line){
+    var p=parseLine(line.trim()); if(!p) return;
+    if(!items.find(function(x){return nrm(x.name)===nrm(p.name);})){addItem(p.name,p.qty,false);added++;}
+  });
+  document.getElementById('recipe-area').value='';
+  toast(added+' article'+(added!==1?'s':'')+' import\xe9'+(added!==1?'s':''));
+  gotoTab(0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PARTAGE
+// ═══════════════════════════════════════════════════════════════
+function renderShare(){
+  var r='';
+  orderedCats().forEach(function(cat){
+    var ci=items.filter(function(x){return x.cat===cat.id&&!x.done;});
+    if(!ci.length) return;
+    r+=cat.emoji+' '+cat.name+'\n';
+    ci.forEach(function(x){r+='  \u2022 '+x.name+(x.qty?' \u2014 '+x.qty:'')+'\n';});
+    r+='\n';
+  });
+  document.getElementById('share-r').textContent=r.trim()||'(liste vide)';
+  var raw=items.filter(function(x){return !x.done;}).map(function(x){return x.name+(x.qty?' \u2014 '+x.qty:'');}).join('\n');
+  document.getElementById('share-raw').textContent=raw||'(liste vide)';
+}
+function copyShare(type){
+  var txt=document.getElementById(type==='r'?'share-r':'share-raw').textContent;
+  navigator.clipboard.writeText(txt); toast('\u2713 Copi\xe9\u00a0!');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════════
+function openBI(){
+  var rows=document.getElementById('bi-rows'); rows.innerHTML='';
+  items.filter(function(x){return !x.done;}).forEach(function(item){
+    var p=calcPrice(item); var pm=parseMult(item.qty,item.name);
+    var row=document.createElement('div'); row.className='bi-row';
+    var nm=document.createElement('span'); nm.className='bi-nm';
+    nm.textContent=item.name+(item.qty?' ('+item.qty+')':'');
+    var unit=document.createElement('span'); unit.className='bi-unit';
+    var val=document.createElement('span');
+    if(p&&p.lo>0){unit.textContent=pm.label||'';val.className='bi-val';val.textContent='~'+fmt(p.lo)+'\u2013'+fmt(p.hi)+' \u20ac';}
+    else{val.className='bi-unk';val.textContent='?';}
+    row.append(nm,unit,val); rows.appendChild(row);
+  });
+  document.getElementById('ov-bi').classList.add('on');
+}
+function closeBI(){document.getElementById('ov-bi').classList.remove('on');}
+function maybeCloseBI(e){if(e.target===document.getElementById('ov-bi'))closeBI();}
+
+var dragSrc=null;
+function openOrder(){
+  var ol=document.getElementById('order-list'); ol.innerHTML='';
+  orderedCats().forEach(function(cat){
+    var item=document.createElement('div');
+    item.className='ord-item'; item.draggable=true; item.dataset.id=cat.id;
+    item.innerHTML='<span class="drag-h">\u2838\u2838</span><span style="font-size:15px">'+cat.emoji+'</span><span class="ord-nm">'+cat.name+'</span>';
+    item.addEventListener('dragstart',function(){dragSrc=item;setTimeout(function(){item.classList.add('dragging');},0);});
+    item.addEventListener('dragend',function(){item.classList.remove('dragging');saveOrder();});
+    item.addEventListener('dragover',function(e){e.preventDefault();var r=item.getBoundingClientRect();ol.insertBefore(dragSrc,e.clientY<r.top+r.height/2?item:item.nextSibling);});
+    var sy=0,clone=null;
+    item.addEventListener('touchstart',function(e){sy=e.touches[0].clientY;dragSrc=item;clone=item.cloneNode(true);clone.style.cssText='position:fixed;width:'+item.offsetWidth+'px;opacity:.85;pointer-events:none;z-index:9999;top:'+item.getBoundingClientRect().top+'px;left:'+item.getBoundingClientRect().left+'px;background:var(--s3)';document.body.appendChild(clone);item.style.opacity='.3';},{passive:true});
+    item.addEventListener('touchmove',function(e){var dy=e.touches[0].clientY-sy;if(clone)clone.style.top=(item.getBoundingClientRect().top+dy)+'px';var el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);var tgt=el&&el.closest('.ord-item');if(tgt&&tgt!==dragSrc){var r=tgt.getBoundingClientRect();ol.insertBefore(dragSrc,e.touches[0].clientY<r.top+r.height/2?tgt:tgt.nextSibling);}},{passive:true});
+    item.addEventListener('touchend',function(){item.style.opacity='';if(clone){clone.remove();clone=null;}saveOrder();});
+    ol.appendChild(item);
+  });
+  document.getElementById('ov-order').classList.add('on');
+}
+function saveOrder(){
+  catOrder=Array.from(document.querySelectorAll('#order-list .ord-item')).map(function(el){return el.dataset.id;});
+  save(); renderList();
+}
+function closeOrder(){document.getElementById('ov-order').classList.remove('on');}
+function maybeCloseOrder(e){if(e.target===document.getElementById('ov-order'))closeOrder();}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+(function init(){
+  // Restaurer config Supabase si elle existe
+  if(sbCfg){
+    document.getElementById('sb-url').value=sbCfg.url;
+    document.getElementById('sb-key').value=sbCfg.key;
+    document.getElementById('sb-listid').value=sbCfg.listId;
+    supabase=true;
+    setSyncStatus('ok','✓ Connecté — synchronisation active\nListe\u00a0: '+sbCfg.listId);
+    setSyncIcon(true);
+    document.getElementById('btn-connect').style.display='none';
+    document.getElementById('btn-disconnect').style.display='block';
+    document.getElementById('setup-banner').classList.add('hide');
+    // Pull initial silencieux
+    pullFromSupabase().then(function(changed){
+      if(changed){renderList();renderFavs();}
+      startRealtimeSync();
+    });
+  }
+  renderList();
+  renderFavs();
+})();
+</script>
 </body>
 </html>
