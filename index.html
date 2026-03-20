@@ -115,17 +115,17 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 .hdiv{border:none;border-top:.5px solid var(--b1)}
 .steps{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.35);line-height:2;padding-left:18px}
 /* SYNC PANEL */
-.sync-field{display:flex;flex-direction:column;gap:5px}
-.sync-field label{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.5px}
-.sync-field input{background:var(--s2);border:.5px solid var(--b2);border-radius:var(--r8);color:#e8e6e1;font-family:'Courier New',monospace;font-size:11px;padding:9px 11px;outline:none;transition:border-color .2s;width:100%}
+.sync-field{display:flex;flex-direction:column;gap:6px}
+.sync-field label{font-family:'Courier New',monospace;font-size:12px;color:rgba(255,255,255,.6);letter-spacing:.5px}
+.sync-field input{background:var(--s2);border:1px solid rgba(255,255,255,.2);border-radius:var(--r8);color:#f0ede8;font-family:'Courier New',monospace;font-size:14px;padding:12px 14px;outline:none;transition:border-color .2s;width:100%}
 .sync-field input:focus{border-color:var(--gold)}
-.sync-field input.ok{border-color:rgba(77,143,98,.5)}
-.sync-field input.err{border-color:rgba(168,68,68,.5)}
-.sync-status{font-family:'Courier New',monospace;font-size:10px;padding:8px 10px;border-radius:var(--r8);line-height:1.6}
-.sync-status.info{background:rgba(74,143,181,.08);color:rgba(74,143,181,.9);border:.5px solid rgba(74,143,181,.2)}
-.sync-status.ok{background:rgba(77,143,98,.08);color:rgba(77,143,98,.9);border:.5px solid rgba(77,143,98,.2)}
-.sync-status.err{background:rgba(168,68,68,.08);color:rgba(168,68,68,.9);border:.5px solid rgba(168,68,68,.2)}
-.sync-hint{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);line-height:1.7}
+.sync-field input.ok{border-color:rgba(77,143,98,.8)}
+.sync-field input.err{border-color:rgba(168,68,68,.8)}
+.sync-status{font-family:'Courier New',monospace;font-size:12px;padding:10px 12px;border-radius:var(--r8);line-height:1.6}
+.sync-status.info{background:rgba(74,143,181,.12);color:rgba(150,210,255,.9);border:.5px solid rgba(74,143,181,.3)}
+.sync-status.ok{background:rgba(77,143,98,.12);color:rgba(100,220,130,.9);border:.5px solid rgba(77,143,98,.3)}
+.sync-status.err{background:rgba(168,68,68,.12);color:rgba(255,120,120,.9);border:.5px solid rgba(168,68,68,.3)}
+.sync-hint{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.4);line-height:1.7}
 /* MODALS */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:none;align-items:flex-end;justify-content:center}
 .overlay.on{display:flex}
@@ -241,28 +241,22 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
     <!-- SYNC -->
     <div class="panel" id="p4">
       <div class="box">
-        <div class="lbl">SYNCHRONISATION SUPABASE</div>
+        <div class="lbl">SYNCHRONISATION</div>
         <div id="sync-status-box" class="sync-status info">
           Non configuré — vos données restent locales sur cet appareil.
         </div>
 
         <div class="sync-field">
-          <label>URL DU PROJET SUPABASE</label>
-          <input id="sb-url" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off" oninput="syncFieldChanged()">
+          <label>IDENTIFIANT DE LISTE</label>
+          <input id="sb-listid" type="text" placeholder="ex: stephane" autocomplete="username" oninput="syncFieldChanged()">
         </div>
         <div class="sync-field">
-          <label>CLÉ ANON (clé publique)</label>
-          <input id="sb-key" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." autocomplete="off" oninput="syncFieldChanged()">
+          <label>MOT DE PASSE</label>
+          <input id="sb-pass" type="password" placeholder="••••••••" autocomplete="current-password" oninput="syncFieldChanged()">
         </div>
-        <div class="sync-field">
-          <label>IDENTIFIANT DE LISTE (partagez ce code avec vos amis)</label>
-          <div class="row">
-            <input id="sb-listid" type="text" placeholder="ex: famille-dupont" autocomplete="off" oninput="syncFieldChanged()" style="flex:1">
-            <button class="btn btn-sm" onclick="genListId()">Générer</button>
-          </div>
-        </div>
-        <button class="btn" id="btn-connect" onclick="connectSupabase()" style="width:100%">Connecter</button>
-        <button class="btn btn-sm" id="btn-disconnect" onclick="disconnectSupabase()" style="width:100%;display:none;border-color:rgba(168,68,68,.4);color:var(--red)">Déconnecter</button>
+        <div class="sync-hint" id="sync-first-time" style="display:none">Première connexion ? Ces identifiants créeront automatiquement votre liste.</div>
+        <button class="btn" id="btn-connect" onclick="connectSupabase()" style="width:100%;padding:14px;font-size:15px">Se connecter</button>
+        <button class="btn" id="btn-disconnect" onclick="disconnectSupabase()" style="width:100%;display:none;border-color:rgba(168,68,68,.4);color:var(--red)">Se déconnecter</button>
 
 
       </div>
@@ -563,10 +557,12 @@ function orderedCats(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SUPABASE SYNC
+// SUPABASE SYNC — système identifiant + mot de passe
 // ═══════════════════════════════════════════════════════════════
+var SB_URL = 'https://nhuocsprmxbpuksaufjq.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5odW9jc3BybXhicHVrc2F1ZmpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MTI4NzIsImV4cCI6MjA1Nzk4ODg3Mn0.placeholder';
+
 var SQL_SCRIPT =
-"-- Coller dans l'éditeur SQL de Supabase\n"+
 "create table if not exists liste_courses (\n"+
 "  list_id text not null,\n"+
 "  data    jsonb not null,\n"+
@@ -578,7 +574,18 @@ var SQL_SCRIPT =
 "create policy \"public read write\" on liste_courses\n"+
 "  for all using (true) with check (true);";
 
-document.getElementById('sql-script').textContent = SQL_SCRIPT;
+function hashPass(pass) {
+  // Hash simple côté client pour ne pas stocker le mot de passe en clair
+  var h = 0;
+  for (var i = 0; i < pass.length; i++) {
+    h = Math.imul(31, h) + pass.charCodeAt(i) | 0;
+  }
+  return Math.abs(h).toString(36);
+}
+
+function getListKey(listId, pass) {
+  return listId.trim().toLowerCase() + '_' + hashPass(pass);
+}
 
 function setSyncStatus(type, msg){
   var box=document.getElementById('sync-status-box');
@@ -595,29 +602,41 @@ function setSyncIcon(connected){
   setSyncDot(connected?'green':'orange');
 }
 
+async function sbFetch(path, method, body) {
+  var opts = {
+    method: method||'GET',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  return fetch(SB_URL + '/rest/v1/' + path, opts);
+}
+
 async function pushToSupabase(){
-  if(!supabase||!sbCfg) return;
-  var payload={list_id:sbCfg.listId, data:{items:items,favs:favs,catOrder:catOrder}, updated_at:new Date().toISOString()};
-  try{
-    var r=await fetch(sbCfg.url+'/rest/v1/liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listId),{
-      method:'GET',headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key,'Content-Type':'application/json'}
-    });
-    var existing=await r.json();
-    var method=existing&&existing.length>0?'PATCH':'POST';
-    var url=sbCfg.url+'/rest/v1/liste_courses'+(method==='PATCH'?'?list_id=eq.'+encodeURIComponent(sbCfg.listId):'');
-    await fetch(url,{method:method,headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)});
+  if(!sbCfg) return;
+  var payload = {list_id: sbCfg.listKey, data: {items:items, favs:favs, catOrder:catOrder}, updated_at: new Date().toISOString()};
+  try {
+    var r = await sbFetch('liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listKey), 'GET');
+    var existing = await r.json();
+    if (existing && existing.length > 0) {
+      await sbFetch('liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listKey), 'PATCH', payload);
+    } else {
+      await sbFetch('liste_courses', 'POST', payload);
+    }
   } catch(e){ console.warn('push error',e); }
 }
 
 async function pullFromSupabase(){
-  if(!supabase||!sbCfg) return false;
-  try{
-    var r=await fetch(sbCfg.url+'/rest/v1/liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listId),{
-      headers:{'apikey':sbCfg.key,'Authorization':'Bearer '+sbCfg.key}
-    });
-    var rows=await r.json();
-    if(rows&&rows.length>0&&rows[0].data){
-      var d=rows[0].data;
+  if(!sbCfg) return false;
+  try {
+    var r = await sbFetch('liste_courses?list_id=eq.'+encodeURIComponent(sbCfg.listKey), 'GET');
+    var rows = await r.json();
+    if (rows && rows.length > 0 && rows[0].data) {
+      var d = rows[0].data;
       if(d.items) items=d.items;
       if(d.favs)  favs=d.favs;
       if(d.catOrder) catOrder=d.catOrder;
@@ -628,51 +647,53 @@ async function pullFromSupabase(){
 }
 
 function startRealtimeSync(){
-  if(!sbCfg) return;
-  if(syncChannel){ try{syncChannel.unsubscribe();}catch(e){} }
-  syncChannel=null;
-  // Polling léger toutes les 8s (fallback universel sans librairie Supabase)
   clearInterval(window._syncInterval);
-  window._syncInterval=setInterval(async function(){
+  window._syncInterval = setInterval(async function(){
     if(syncPaused) return;
-    var changed=await pullFromSupabase();
+    var changed = await pullFromSupabase();
     if(changed){ renderList(); renderFavs(); }
-  },8000);
+  }, 8000);
 }
 
 async function connectSupabase(){
-  var url=document.getElementById('sb-url').value.trim().replace(/\/$/,'');
-  var key=document.getElementById('sb-key').value.trim();
-  var listId=document.getElementById('sb-listid').value.trim();
-  if(!url||!key||!listId){setSyncStatus('err','Tous les champs sont requis.');return;}
+  var listId = document.getElementById('sb-listid').value.trim();
+  var pass   = document.getElementById('sb-pass').value.trim();
+  if(!listId || !pass){
+    setSyncStatus('err','Veuillez remplir l\'identifiant et le mot de passe.');
+    return;
+  }
 
+  var listKey = getListKey(listId, pass);
   setSyncStatus('info','Connexion en cours…');
-  document.getElementById('btn-connect').textContent='Connexion…';
+  document.getElementById('btn-connect').textContent = 'Connexion…';
 
-  try{
-    var r=await fetch(url+'/rest/v1/liste_courses?limit=1',{
-      headers:{'apikey':key,'Authorization':'Bearer '+key}
-    });
+  // Test connexion Supabase
+  try {
+    var r = await sbFetch('liste_courses?limit=1', 'GET');
     if(!r.ok) throw new Error('HTTP '+r.status);
-  } catch(e){
-    setSyncStatus('err','Erreur de connexion. Vérifiez l\'URL et la clé.\n'+e.message);
-    document.getElementById('btn-connect').textContent='Connecter';
+  } catch(e) {
+    setSyncStatus('err','Erreur de connexion au serveur.');
+    document.getElementById('btn-connect').textContent = 'Se connecter';
     setSyncDot('red');
     return;
   }
 
-  sbCfg={url:url,key:key,listId:listId};
-  supabase=true;
-  localStorage.setItem('crs_sbcfg',JSON.stringify(sbCfg));
+  sbCfg = {listKey: listKey, listId: listId};
+  supabase = true;
 
-  // Pull initial puis push si vide
-  var pulled=await pullFromSupabase();
+  // Sauvegarde dans cookie (dure 1 an) ET localStorage
+  var expires = new Date();
+  expires.setFullYear(expires.getFullYear() + 1);
+  document.cookie = 'crs_cfg='+encodeURIComponent(JSON.stringify(sbCfg))+'; expires='+expires.toUTCString()+'; path=/; SameSite=Lax';
+  localStorage.setItem('crs_sbcfg', JSON.stringify(sbCfg));
+
+  var pulled = await pullFromSupabase();
   if(!pulled) await pushToSupabase();
 
-  setSyncStatus('ok','✓ Connecté — synchronisation active\nListe : '+listId);
+  setSyncStatus('ok', '✓ Connecté — liste "'+listId+'" synchronisée');
   setSyncIcon(true);
-  document.getElementById('btn-connect').style.display='none';
-  document.getElementById('btn-disconnect').style.display='block';
+  document.getElementById('btn-connect').style.display = 'none';
+  document.getElementById('btn-disconnect').style.display = 'block';
   document.getElementById('setup-banner').classList.add('hide');
   startRealtimeSync();
   renderList(); renderFavs();
@@ -681,32 +702,30 @@ async function connectSupabase(){
 
 function disconnectSupabase(){
   clearInterval(window._syncInterval);
-  supabase=null; sbCfg=null; syncChannel=null;
+  supabase=null; sbCfg=null;
+  document.cookie = 'crs_cfg=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
   localStorage.removeItem('crs_sbcfg');
-  setSyncStatus('info','Non configuré — vos données restent locales sur cet appareil.');
+  setSyncStatus('info','Déconnecté — données locales uniquement.');
   setSyncIcon(false);
   setSyncDot('orange');
   document.getElementById('btn-connect').style.display='block';
-  document.getElementById('btn-connect').textContent='Connecter';
+  document.getElementById('btn-connect').textContent='Se connecter';
   document.getElementById('btn-disconnect').style.display='none';
   document.getElementById('setup-banner').classList.remove('hide');
   toast('Synchronisation désactivée');
 }
 
 function syncFieldChanged(){
-  document.getElementById('btn-connect').textContent='Connecter';
-}
-function genListId(){
-  var words=['courses','marche','maison','famille','cuisine','panier','liste'];
-  var w=words[Math.floor(Math.random()*words.length)];
-  document.getElementById('sb-listid').value=w+'-'+Math.random().toString(36).slice(2,6);
-}
-function copySQL(){
-  navigator.clipboard.writeText(SQL_SCRIPT);
-  toast('Script SQL copié !');
+  var listId = document.getElementById('sb-listid').value.trim();
+  document.getElementById('sync-first-time').style.display = listId ? 'block' : 'none';
+  document.getElementById('btn-connect').textContent = 'Se connecter';
 }
 
-// Sauvegarde + push après chaque modification
+function readCookie(name) {
+  var match = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
 function saveAndSync(){
   save();
   if(supabase&&sbCfg){
@@ -1007,18 +1026,23 @@ function maybeCloseOrder(e){if(e.target===document.getElementById('ov-order'))cl
 // INIT
 // ═══════════════════════════════════════════════════════════════
 (function init(){
-  // Restaurer config Supabase si elle existe
+  // Restaurer config depuis cookie OU localStorage
+  var cookieVal = readCookie('crs_cfg');
+  if(cookieVal) {
+    try { sbCfg = JSON.parse(cookieVal); } catch(e){}
+  }
+  if(!sbCfg) {
+    var lsVal = localStorage.getItem('crs_sbcfg');
+    if(lsVal) { try { sbCfg = JSON.parse(lsVal); } catch(e){} }
+  }
   if(sbCfg){
-    document.getElementById('sb-url').value=sbCfg.url;
-    document.getElementById('sb-key').value=sbCfg.key;
-    document.getElementById('sb-listid').value=sbCfg.listId;
     supabase=true;
-    setSyncStatus('ok','✓ Connecté — synchronisation active\nListe\u00a0: '+sbCfg.listId);
+    document.getElementById('sb-listid').value = sbCfg.listId||'';
+    setSyncStatus('ok','✓ Connecté — liste "'+sbCfg.listId+'" synchronisée');
     setSyncIcon(true);
     document.getElementById('btn-connect').style.display='none';
     document.getElementById('btn-disconnect').style.display='block';
     document.getElementById('setup-banner').classList.add('hide');
-    // Pull initial silencieux
     pullFromSupabase().then(function(changed){
       if(changed){renderList();renderFavs();}
       startRealtimeSync();
