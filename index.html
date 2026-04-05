@@ -116,7 +116,7 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 #btn-favs{width:100%}
 #btn-favs:disabled{opacity:.3;cursor:not-allowed}
 /* RECETTE */
-#recipe-area{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:14px;line-height:1.7;padding:11px;min-height:160px;resize:vertical;outline:none;width:100%}
+#recipe-area{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:15px;line-height:1.8;padding:13px;min-height:260px;resize:vertical;outline:none;width:100%}
 #recipe-area:focus{border-color:rgba(245,200,66,.5)}
 /* SHARE */
 .share-pre{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);padding:11px;font-size:13px;line-height:1.75;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow-y:auto;color:rgba(255,255,255,.6);font-family:'Courier New',monospace}
@@ -279,8 +279,22 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
     <div class="panel" id="p2">
       <div class="box">
         <div class="lbl">COLLER UNE LISTE D'INGRÉDIENTS</div>
-        <textarea id="recipe-area" rows="7" placeholder="400g d'asperges&#10;3 gousses d'ail…"></textarea>
-        <button class="btn" onclick="importRecipe()">Importer dans la liste</button>
+        <textarea id="recipe-area" rows="10" placeholder="Collez ici vos ingrédients, un par ligne :&#10;&#10;400g d'asperges vertes&#10;3 gousses d'ail&#10;pousses d'épinards&#10;2 cs d'huile d'olive&#10;…"></textarea>
+        <button class="btn" onclick="importRecipe()" style="width:100%;padding:13px;font-size:15px">⬆ Importer dans la liste</button>
+      </div>
+      <div class="box">
+        <div class="lbl">✨ GÉNÉRER UNE LISTE AVEC L'IA</div>
+        <div style="font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.45);line-height:1.7">Tapez le nom d'un plat et Claude génère automatiquement les ingrédients.</div>
+        <div style="display:flex;gap:7px">
+          <input id="ai-recipe-input" class="am-inp" type="text" placeholder="ex: Boeuf bourguignon, Tarte tatin…" style="flex:1;font-size:14px;padding:10px 12px">
+          <input id="ai-recipe-pers" type="number" min="1" max="12" value="4" style="width:60px;background:var(--s2);border:.5px solid var(--b2);border-radius:var(--r8);color:#f0ede8;font-family:'Courier New',monospace;font-size:14px;padding:10px;outline:none;text-align:center">
+        </div>
+        <div style="font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3)">personnes</div>
+        <div id="ai-recipe-status" style="display:none" class="ai-loading">
+          <span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>
+          <span>Génération des ingrédients…</span>
+        </div>
+        <button class="btn btn-ai" onclick="aiGenerateRecipe()" style="width:100%;padding:13px;font-size:15px">✨ Générer les ingrédients</button>
       </div>
     </div>
 
@@ -552,6 +566,35 @@ var amPersonnes = 4;
 function changePersonnes(delta){
   amPersonnes = Math.max(1, Math.min(12, amPersonnes + delta));
   document.getElementById('am-personnes-val').textContent = amPersonnes;
+}
+
+async function aiGenerateRecipe(){
+  var plat=document.getElementById('ai-recipe-input').value.trim();
+  var pers=parseInt(document.getElementById('ai-recipe-pers').value)||4;
+  if(!plat){toast('Tapez d\'abord un nom de plat !');return;}
+  var status=document.getElementById('ai-recipe-status');
+  status.style.display='flex';
+  try{
+    var txt=await callClaude(
+      'Donne-moi la liste des ingrédients pour "'+plat+'" pour '+pers+' personne'+(pers>1?'s':'')+'. Réponds UNIQUEMENT avec ce JSON: {"ingredients":[{"name":"tomate","qty":"4"},{"name":"huile d\'olive","qty":"2 cs"}]}',
+      'Tu es un assistant culinaire français. Réponds uniquement en JSON valide, sans markdown ni explication.'
+    );
+    status.style.display='none';
+    if(!txt) throw new Error('no response');
+    var clean=txt.replace(/```json|```/g,'').trim();
+    var parsed=JSON.parse(clean);
+    if(parsed.ingredients&&parsed.ingredients.length){
+      // Injecter dans la zone de texte
+      var lines=parsed.ingredients.map(function(i){return i.qty?i.qty+' '+i.name:i.name;});
+      document.getElementById('recipe-area').value=lines.join('\n');
+      toast('✨ '+parsed.ingredients.length+' ingrédients générés — cliquez sur Importer !');
+      // Scroll vers la zone texte
+      document.getElementById('recipe-area').scrollIntoView({behavior:'smooth'});
+    } else throw new Error('empty');
+  }catch(e){
+    status.style.display='none';
+    toast('Erreur IA — réessayez ou saisissez manuellement');
+  }
 }
 
 async function aiGetIngredients(){
