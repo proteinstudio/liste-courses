@@ -546,19 +546,22 @@ function saveAndSync(){
 // API CLAUDE — ingrédients & suggestions
 // ═══════════════════════════════════════════════════════════════
 async function callClaude(prompt, sys){
-  var resp = await fetch('https://api.anthropic.com/v1/messages',{
+  // Proxy via Supabase Edge Function pour éviter les problèmes CORS
+  var resp = await fetch(SB_URL+'/functions/v1/claude-proxy', {
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+(authToken||SB_KEY),
+      'apikey': SB_KEY
+    },
     body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:1000,
-      system: sys||'Tu es un assistant culinaire français. Réponds uniquement en JSON valide, sans markdown.',
-      messages:[{role:'user',content:prompt}]
+      prompt: prompt,
+      system: sys||'Tu es un assistant culinaire français. Réponds uniquement en JSON valide, sans markdown.'
     })
   });
+  if(!resp.ok) return null;
   var data=await resp.json();
-  if(data.content&&data.content[0]) return data.content[0].text;
-  return null;
+  return data.text||null;
 }
 
 var amPersonnes = 4;
