@@ -304,6 +304,18 @@ async function sbAuthPost(path,body){
   var r=await fetch(SB_URL+'/auth/v1/'+path,{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
   return r.json();
 }
+async function refreshToken(refreshTok){
+  if(!refreshTok) return false;
+  try{
+    var d=await sbAuthPost('token?grant_type=refresh_token',{refresh_token:refreshTok});
+    if(d.access_token){
+      await afterAuth(d, sbCfg?sbCfg.email:'');
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
 async function sbRest(path,method,body){
   var h={'apikey':SB_KEY,'Authorization':'Bearer '+(authToken||SB_KEY),'Content-Type':'application/json','Prefer':'return=minimal'};
   var o={method:method||'GET',headers:h};
@@ -338,7 +350,8 @@ async function afterAuth(d,email){
   authUserId=d.user?d.user.id:null;
   sbCfg={listKey:authUserId,email:email};
   supabase=true;
-  var store=JSON.stringify({token:authToken,userId:authUserId,email:email});
+  // Sauvegarde aussi le refresh_token pour renouveler la session
+  var store=JSON.stringify({token:authToken,refreshToken:d.refresh_token||null,userId:authUserId,email:email});
   localStorage.setItem('crs_auth',store);
   writeCookie('crs_auth',store);
   setSyncStatus('ok','✓ Connecté — '+email);
@@ -489,16 +502,30 @@ function maybeCloseOrder(e){if(e.target===document.getElementById('ov-order'))cl
     try{
       var auth=JSON.parse(stored);
       if(auth.token&&auth.userId){
-        authToken=auth.token;authUserId=auth.userId;
+        authToken=auth.token;
+        authUserId=auth.userId;
         sbCfg={listKey:auth.userId,email:auth.email};
         supabase=true;
+        // Tente un refresh du token pour s'assurer qu'il est valide
+        if(auth.refreshToken){
+          refreshToken(auth.refreshToken).then(function(ok){
+            if(!ok){
+              // Token expiré et refresh échoué → déconnecter proprement
+              authLogout();
+              setSyncStatus('err','Session expirée. Veuillez vous reconnecter.');
+            } else {
+              pullFromSupabase().then(function(changed){if(changed){renderList();renderFavs();}startRealtimeSync();});
+            }
+          });
+        } else {
+          pullFromSupabase().then(function(changed){if(changed){renderList();renderFavs();}startRealtimeSync();});
+        }
         setSyncStatus('ok','\u2713 Connect\xe9 \u2014 '+auth.email);
         setSyncIcon(true);
         document.getElementById('auth-form').style.display='none';
         document.getElementById('auth-connected').style.display='flex';
         document.getElementById('auth-connected-info').textContent='Connect\xe9 : '+auth.email;
         document.getElementById('setup-banner').classList.add('hide');
-        pullFromSupabase().then(function(changed){if(changed){renderList();renderFavs();}startRealtimeSync();});
       }
     }catch(e){}
   }
