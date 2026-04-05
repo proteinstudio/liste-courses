@@ -6,7 +6,7 @@
 <title>Liste de courses</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--bg:#000;--s1:#0f0f11;--s2:#1a1a1f;--s3:#242428;--gold:#d4a856;--green:#4d8f62;--red:#a84444;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--r8:8px;--r12:12px}
+:root{--bg:#000;--s1:#0f0f11;--s2:#1a1a1f;--s3:#242428;--gold:#d4a856;--gold2:#f5c842;--green:#4d8f62;--red:#a84444;--blue:#4a8fb5;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);--r8:8px;--r12:12px}
 html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,serif;font-size:17px;overflow:hidden}
 #app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto}
 #hdr{padding:14px 16px 8px;flex-shrink:0;display:flex;align-items:center;gap:10px}
@@ -23,11 +23,12 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 #prog-wrap{height:1px;background:rgba(255,255,255,.06);flex-shrink:0}
 #prog-bar{height:1px;background:var(--gold);width:0%;transition:width .4s}
 #tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 16px 8px;flex-shrink:0}
-.tab{padding:14px 8px;text-align:center;font-family:'Courier New',monospace;font-size:14px;letter-spacing:.3px;color:rgba(255,255,255,.7);cursor:pointer;background:var(--s2);border:.5px solid rgba(255,255,255,.15);border-radius:var(--r12);transition:all .2s;line-height:1.4;font-weight:500}
-.tab.on{color:#f5c842;border-color:rgba(245,200,66,.6);background:rgba(245,200,66,.12);font-weight:bold}
+.tab{padding:13px 8px;text-align:center;font-family:'Courier New',monospace;font-size:13px;letter-spacing:.3px;color:rgba(255,255,255,.7);cursor:pointer;background:var(--s2);border:.5px solid rgba(255,255,255,.15);border-radius:var(--r12);transition:all .2s;line-height:1.4;font-weight:500}
+.tab.on{color:var(--gold2);border-color:rgba(245,200,66,.6);background:rgba(245,200,66,.12);font-weight:bold}
 #panels{flex:1;overflow:hidden;position:relative}
 .panel{position:absolute;inset:0;overflow-y:auto;padding:8px 16px 20px;display:none;flex-direction:column;gap:10px}
 .panel.on{display:flex}
+/* BUDGET */
 #budget{background:var(--s2);border:.5px solid rgba(212,168,86,.3);border-radius:var(--r12);padding:12px 14px;display:flex;align-items:center;gap:10px}
 #budget.hide{display:none}
 .b-icon{font-size:22px}.b-text{flex:1}
@@ -41,15 +42,19 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 .sb-title{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(74,143,181,.9);margin-bottom:4px}
 .sb-desc{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.4);line-height:1.6}
 .sb-btn{font-family:'Courier New',monospace;font-size:10px;padding:5px 10px;border-radius:6px;border:.5px solid rgba(74,143,181,.5);color:rgba(74,143,181,.9);cursor:pointer;background:transparent;margin-top:7px}
+/* TOOLBAR */
 #counter{font-family:'Courier New',monospace;font-size:12px;color:rgba(255,255,255,.6);padding:2px 0}
 #toolbar{display:flex;gap:6px;flex-wrap:wrap}
-.btn{font-family:'Courier New',monospace;font-size:13px;letter-spacing:.5px;padding:10px 14px;border-radius:var(--r8);border:1px solid;cursor:pointer;transition:all .15s;background:rgba(245,200,66,.15);color:#f5c842;border-color:rgba(245,200,66,.6)}
-.btn:hover,.btn.on{background:rgba(245,200,66,.25);border-color:#f5c842}
+.btn{font-family:'Courier New',monospace;font-size:13px;letter-spacing:.5px;padding:10px 14px;border-radius:var(--r8);border:1px solid;cursor:pointer;transition:all .15s;background:rgba(245,200,66,.12);color:var(--gold2);border-color:rgba(245,200,66,.5)}
+.btn:hover,.btn.on{background:rgba(245,200,66,.22);border-color:var(--gold2)}
 .btn-sm{padding:8px 12px;font-size:12px}
-.btn-ghost{background:transparent;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)}
-.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.4)}
+.btn-ghost{background:transparent;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.65)}
+.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.4);color:#fff}
 .btn-danger{background:transparent;border-color:rgba(168,68,68,.4);color:var(--red)}
 .btn-danger:hover{background:rgba(168,68,68,.1)}
+.btn-ai{background:rgba(138,92,246,.15);border-color:rgba(138,92,246,.5);color:#c4a8ff}
+.btn-ai:hover{background:rgba(138,92,246,.25)}
+/* CATEGORIES */
 .cat-sec{display:flex;flex-direction:column;gap:5px}
 .cat-hdr{display:flex;align-items:center;gap:8px;padding:4px 2px;cursor:pointer;user-select:none}
 .cat-em{font-size:16px;width:22px;text-align:center}
@@ -58,6 +63,7 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 .cat-arr{color:rgba(255,255,255,.28);font-size:9px;transition:transform .2s}
 .cat-sec.col .cat-arr{transform:rotate(-90deg)}
 .cat-items{display:flex;flex-direction:column;gap:5px}
+/* ITEMS */
 .item{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r12);display:flex;align-items:center;gap:10px;padding:11px 12px;transition:transform .2s,background .15s}
 .item.swiping{background:rgba(168,68,68,.25)}
 .chk{width:24px;height:24px;min-width:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
@@ -65,12 +71,13 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 .chk.on::after{content:'\2713';color:#fff;font-size:11px}
 .i-name{flex:1;font-size:16px;cursor:pointer;color:#f0ede8}
 .i-qty{font-family:'Courier New',monospace;font-size:12px;color:rgba(255,255,255,.6);cursor:pointer;white-space:nowrap;margin-right:2px}
-.i-price{font-family:'Courier New',monospace;font-size:11px;color:#f5c842;min-width:46px;text-align:right;white-space:nowrap}
+.i-price{font-family:'Courier New',monospace;font-size:11px;color:var(--gold2);min-width:46px;text-align:right;white-space:nowrap}
 .i-del{width:30px;height:30px;min-width:30px;background:var(--s3);border:.5px solid var(--b2);border-radius:6px;color:rgba(255,255,255,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .i-del:hover{color:#fff}
 .item.done .i-name{text-decoration:line-through;opacity:.3}
 .item.done .i-qty,.item.done .i-price{opacity:.3}
 .item.done .chk{border-color:var(--green)}
+/* EDIT */
 .editcard{background:var(--s2);border:.5px solid var(--gold);border-radius:var(--r12);display:flex;align-items:center;gap:6px;padding:8px 10px}
 .editcard input{background:var(--s3);border:.5px solid rgba(255,255,255,.12);border-radius:6px;color:#f0ede8;font-family:Georgia,serif;font-size:14px;padding:6px 9px;outline:none;transition:border-color .2s}
 .editcard input:focus{border-color:var(--gold)}
@@ -79,9 +86,11 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 .editcard button{width:30px;height:30px;border-radius:6px;border:.5px solid;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;background:transparent;flex-shrink:0}
 .editcard .eok{color:var(--green);border-color:rgba(77,143,98,.5)}
 .editcard .ecx{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.15)}
+/* EMPTY */
 #empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:50px 20px;opacity:.5}
 #empty .ic{font-size:42px;opacity:.4}
 #empty p{font-family:'Courier New',monospace;font-size:11px;text-align:center;line-height:1.8;color:rgba(255,255,255,.45)}
+/* BOX / FORMS */
 .box{background:var(--s1);border:.5px solid var(--b1);border-radius:var(--r12);padding:14px;display:flex;flex-direction:column;gap:10px}
 .lbl{font-family:'Courier New',monospace;font-size:11px;letter-spacing:1px;color:rgba(255,255,255,.65)}
 .row{display:flex;gap:7px}
@@ -89,13 +98,13 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 .row input:focus{border-color:var(--gold)}
 #in-name{flex:1;min-width:0;font-family:Georgia,serif}
 #in-qty{width:68px;font-family:'Courier New',monospace;font-size:12px}
-#btn-add{font-size:17px}
 #suggs{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);overflow:hidden;display:none;margin-top:-4px}
 .sugg{padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:.5px solid var(--b1);display:flex;align-items:center;gap:8px}
 .sugg:last-child{border-bottom:none}
 .sugg:hover{background:var(--s3)}
 .sugg-cat{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.28);flex:1}
 .sugg-price{font-family:'Courier New',monospace;font-size:10px;color:rgba(245,200,66,.7);white-space:nowrap}
+/* FAVS */
 #favs-list{display:flex;flex-direction:column;gap:4px}
 .fav{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);display:flex;align-items:center;gap:9px;padding:9px 11px}
 .fav-nm{flex:1;font-size:14px}
@@ -106,35 +115,90 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
 .fav-chk.on::after{content:'\2713';color:#000;font-size:10px}
 #btn-favs{width:100%}
 #btn-favs:disabled{opacity:.3;cursor:not-allowed}
-#recipe-area{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:14px;line-height:1.7;padding:11px;min-height:160px;resize:vertical;outline:none;width:100%;transition:border-color .2s}
+/* RECETTE */
+#recipe-area{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:14px;line-height:1.7;padding:11px;min-height:160px;resize:vertical;outline:none;width:100%}
 #recipe-area:focus{border-color:rgba(245,200,66,.5)}
+/* SHARE */
 .share-pre{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);padding:11px;font-size:13px;line-height:1.75;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow-y:auto;color:rgba(255,255,255,.6);font-family:'Courier New',monospace}
 .hdiv{border:none;border-top:.5px solid var(--b1)}
-/* SYNC */
-.sync-field{display:flex;flex-direction:column;gap:6px}
-.sync-field label{font-family:'Courier New',monospace;font-size:12px;color:rgba(255,255,255,.6);letter-spacing:.5px}
-.sync-field input{background:var(--s2);border:1px solid rgba(255,255,255,.2);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:15px;padding:12px 14px;outline:none;width:100%;transition:border-color .2s}
-.sync-field input:focus{border-color:var(--gold)}
-.sync-status{font-family:'Courier New',monospace;font-size:12px;padding:10px 12px;border-radius:var(--r8);line-height:1.6}
-.sync-status.info{background:rgba(74,143,181,.12);color:rgba(150,210,255,.9);border:.5px solid rgba(74,143,181,.3)}
-.sync-status.ok{background:rgba(77,143,98,.12);color:rgba(100,220,130,.9);border:.5px solid rgba(77,143,98,.3)}
-.sync-status.err{background:rgba(168,68,68,.12);color:rgba(255,120,120,.9);border:.5px solid rgba(168,68,68,.3)}
-#auth-connected-info{font-family:'Courier New',monospace;font-size:12px;color:rgba(255,255,255,.5);text-align:center;padding:4px 0}
-/* MODALS */
+/* AGENDA */
+.agenda-week-label{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.4);text-align:center;padding:2px 0 6px;letter-spacing:1px}
+.agenda-day{background:var(--s1);border:.5px solid var(--b1);border-radius:var(--r12);overflow:hidden;margin-bottom:8px}
+.agenda-day-hdr{padding:10px 14px;font-family:'Courier New',monospace;font-size:13px;font-weight:600;background:var(--s2);border-bottom:.5px solid var(--b1);display:flex;align-items:center;gap:8px;color:#f0ede8}
+.agenda-day-hdr.today{background:rgba(245,200,66,.1);color:var(--gold2)}
+.agenda-day-hdr .day-date{font-size:10px;color:rgba(255,255,255,.35);margin-left:auto;font-weight:400}
+.agenda-repas{padding:10px 14px;border-bottom:.5px solid var(--b1)}
+.agenda-repas:last-child{border-bottom:none}
+.repas-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.repas-label{font-family:'Courier New',monospace;font-size:10px;letter-spacing:.8px;color:rgba(255,255,255,.45);text-transform:uppercase;flex:1}
+.repas-plat{font-size:15px;color:#f0ede8;margin-bottom:4px}
+.repas-plat.empty{color:rgba(255,255,255,.25);font-style:italic;font-size:13px}
+/* Photo plat */
+.repas-photo{width:100%;height:120px;object-fit:cover;border-radius:var(--r8);margin-bottom:6px;background:var(--s3)}
+.repas-photo.hide{display:none}
+.repas-ing{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.4);line-height:1.6;margin-bottom:6px}
+.repas-actions{display:flex;gap:6px;flex-wrap:wrap}
+.repas-btn{font-family:'Courier New',monospace;font-size:11px;padding:6px 10px;border-radius:6px;border:.5px solid;cursor:pointer;background:transparent;transition:all .15s}
+.rb-edit{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.25)}
+.rb-edit:hover{background:rgba(255,255,255,.07)}
+.rb-add{color:var(--gold2);border-color:rgba(245,200,66,.4)}
+.rb-add:hover{background:rgba(245,200,66,.1)}
+.rb-del{color:var(--red);border-color:rgba(168,68,68,.3)}
+.rb-del:hover{background:rgba(168,68,68,.08)}
+.rb-ai{color:#c4a8ff;border-color:rgba(138,92,246,.4)}
+.rb-ai:hover{background:rgba(138,92,246,.1)}
+/* SUGGESTION CARDS */
+.sugg-cards{display:flex;flex-direction:column;gap:8px}
+.sugg-card{background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r12);overflow:hidden;cursor:pointer;transition:border-color .2s}
+.sugg-card:hover{border-color:rgba(138,92,246,.5)}
+.sugg-card-img{width:100%;height:100px;object-fit:cover;background:var(--s3)}
+.sugg-card-body{padding:10px 12px}
+.sugg-card-name{font-size:15px;font-weight:500;color:#f0ede8;margin-bottom:4px}
+.sugg-card-desc{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.4);line-height:1.5}
+.sugg-card-ing{font-family:'Courier New',monospace;font-size:10px;color:rgba(138,92,246,.8);margin-top:4px}
+/* AI LOADING */
+.ai-loading{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(138,92,246,.08);border:.5px solid rgba(138,92,246,.2);border-radius:var(--r8);font-family:'Courier New',monospace;font-size:11px;color:rgba(138,92,246,.8)}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:#c4a8ff;animation:pulse 1s infinite}
+.ai-dot:nth-child(2){animation-delay:.2s}
+.ai-dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+/* MODAL BASE */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:none;align-items:flex-end;justify-content:center}
 .overlay.on{display:flex}
-.modal{background:var(--s1);border:.5px solid var(--b2);border-top-left-radius:20px;border-top-right-radius:20px;padding:20px 16px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.modal-title{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:4px}
-.ord-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);cursor:grab;user-select:none}
+.modal{background:var(--s1);border:.5px solid var(--b2);border-top-left-radius:20px;border-top-right-radius:20px;padding:20px 16px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.modal-title{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px}
+/* MODAL AGENDA */
+.am-inp{background:var(--s2);border:1px solid rgba(255,255,255,.2);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:15px;padding:11px 13px;outline:none;width:100%;transition:border-color .2s}
+.am-inp:focus{border-color:var(--gold)}
+.am-ing-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.am-ing-row input{background:var(--s2);border:.5px solid rgba(255,255,255,.15);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:14px;padding:9px 11px;outline:none;transition:border-color .2s}
+.am-ing-row input:focus{border-color:var(--gold)}
+.am-ing-nm{flex:1;min-width:0}
+.am-ing-qt{width:72px;font-family:'Courier New',monospace;font-size:12px}
+.am-ing-del{width:30px;height:30px;min-width:30px;background:transparent;border:.5px solid rgba(255,255,255,.15);border-radius:6px;color:rgba(255,255,255,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.am-ing-del:hover{color:var(--red)}
+/* MODAL ORDER */
+.ord-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:.5px solid var(--b1);border-radius:var(--r8);cursor:grab;user-select:none;margin-bottom:6px}
 .ord-item.dragging{opacity:.4}
 .drag-h{color:rgba(255,255,255,.2);font-size:18px;letter-spacing:-2px}
 .ord-nm{font-family:'Courier New',monospace;font-size:11px;flex:1;color:rgba(255,255,255,.6)}
-.bi-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--s2);border-radius:var(--r8);border:.5px solid var(--b1);gap:6px}
+/* MODAL BI */
+.bi-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--s2);border-radius:var(--r8);border:.5px solid var(--b1);gap:6px;margin-bottom:5px}
 .bi-nm{font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bi-unit{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}
 .bi-val{font-family:'Courier New',monospace;font-size:11px;color:var(--gold);white-space:nowrap}
 .bi-unk{font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.2)}
-.bi-note{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);line-height:1.6;padding-top:4px}
+/* SYNC */
+.sync-field{display:flex;flex-direction:column;gap:6px}
+.sync-field label{font-family:'Courier New',monospace;font-size:12px;color:rgba(255,255,255,.6);letter-spacing:.5px}
+.sync-field input{background:var(--s2);border:1px solid rgba(255,255,255,.2);border-radius:var(--r8);color:#f0ede8;font-family:Georgia,serif;font-size:15px;padding:12px 14px;outline:none;width:100%}
+.sync-field input:focus{border-color:var(--gold)}
+.sync-status{font-family:'Courier New',monospace;font-size:12px;padding:10px 12px;border-radius:var(--r8);line-height:1.6}
+.sync-status.info{background:rgba(74,143,181,.1);color:rgba(150,210,255,.9);border:.5px solid rgba(74,143,181,.3)}
+.sync-status.ok{background:rgba(77,143,98,.1);color:rgba(100,220,130,.9);border:.5px solid rgba(77,143,98,.3)}
+.sync-status.err{background:rgba(168,68,68,.1);color:rgba(255,120,120,.9);border:.5px solid rgba(168,68,68,.3)}
+#auth-connected-info{font-family:'Courier New',monospace;font-size:12px;color:rgba(255,255,255,.5);text-align:center;padding:4px 0}
+/* TOAST */
 #toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--s1);border:.5px solid var(--gold);border-radius:var(--r8);color:var(--gold);font-family:'Courier New',monospace;font-size:11px;padding:9px 18px;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:9999}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 ::-webkit-scrollbar{width:2px}
@@ -148,18 +212,19 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
       <h1>Ma liste de courses</h1>
       <div class="sub">// marché · supermarché · épicerie</div>
     </div>
-    <button id="sync-btn" onclick="gotoTab(4)" title="Synchronisation">
+    <button id="sync-btn" onclick="gotoTab(5)" title="Sync">
       <span>☁️</span>
       <span id="sync-dot" class="on orange"></span>
     </button>
   </div>
   <div id="prog-wrap"><div id="prog-bar"></div></div>
   <div id="tabs">
-    <button class="tab on"  onclick="gotoTab(0)">🛒 Liste</button>
-    <button class="tab"     onclick="gotoTab(1)">+ Article</button>
-    <button class="tab"     onclick="gotoTab(2)">📋 Recette</button>
-    <button class="tab"     onclick="gotoTab(3)">📤 Partager</button>
-    <button class="tab"     onclick="gotoTab(4)">⚙ Sync</button>
+    <button class="tab on" onclick="gotoTab(0)">🛒 Liste</button>
+    <button class="tab"    onclick="gotoTab(1)">+ Article</button>
+    <button class="tab"    onclick="gotoTab(2)">📋 Recette</button>
+    <button class="tab"    onclick="gotoTab(3)">📅 Agenda</button>
+    <button class="tab"    onclick="gotoTab(4)">📤 Partager</button>
+    <button class="tab"    onclick="gotoTab(5)">⚙ Sync</button>
   </div>
   <div id="panels">
 
@@ -169,8 +234,8 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
         <div class="sb-icon">☁️</div>
         <div class="sb-text">
           <div class="sb-title">SYNCHRONISATION NON CONFIGURÉE</div>
-          <div class="sb-desc">Connectez-vous pour accéder à votre liste sur tous vos appareils.</div>
-          <button class="sb-btn" onclick="gotoTab(4)">Configurer →</button>
+          <div class="sb-desc">Connectez-vous pour synchroniser sur tous vos appareils.</div>
+          <button class="sb-btn" onclick="gotoTab(5)">Configurer →</button>
         </div>
       </div>
       <div id="budget" class="hide">
@@ -199,7 +264,7 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
         <div class="row">
           <input id="in-name" type="text" placeholder="Ingrédient…" autocomplete="off">
           <input id="in-qty"  type="text" placeholder="Qté">
-          <button class="btn" id="btn-add" onclick="addFromInput()">+</button>
+          <button class="btn" onclick="addFromInput()">+</button>
         </div>
         <div id="suggs"></div>
       </div>
@@ -214,13 +279,18 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
     <div class="panel" id="p2">
       <div class="box">
         <div class="lbl">COLLER UNE LISTE D'INGRÉDIENTS</div>
-        <textarea id="recipe-area" rows="7" placeholder="400g d'asperges&#10;3 gousses d'ail&#10;pousses d'épinards…"></textarea>
+        <textarea id="recipe-area" rows="7" placeholder="400g d'asperges&#10;3 gousses d'ail…"></textarea>
         <button class="btn" onclick="importRecipe()">Importer dans la liste</button>
       </div>
     </div>
 
-    <!-- PARTAGER -->
+    <!-- AGENDA -->
     <div class="panel" id="p3">
+      <div id="agenda-container"></div>
+    </div>
+
+    <!-- PARTAGER -->
+    <div class="panel" id="p4">
       <div class="box">
         <div class="lbl">COPIER LA LISTE</div>
         <div class="share-pre" id="share-r"></div>
@@ -233,26 +303,22 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
     </div>
 
     <!-- SYNC -->
-    <div class="panel" id="p4">
+    <div class="panel" id="p5">
       <div class="box">
         <div class="lbl">SYNCHRONISATION</div>
-        <div id="sync-status-box" class="sync-status info">Connectez-vous pour synchroniser votre liste sur tous vos appareils.</div>
-
-        <!-- Formulaire connexion -->
+        <div id="sync-status-box" class="sync-status info">Connectez-vous pour synchroniser votre liste.</div>
         <div id="auth-form" style="display:flex;flex-direction:column;gap:10px">
           <div class="sync-field">
             <label>EMAIL</label>
             <input id="sb-email" type="email" placeholder="votre@email.com" autocomplete="email">
           </div>
           <div class="sync-field">
-            <label>MOT DE PASSE (6 caractères minimum)</label>
+            <label>MOT DE PASSE (6 car. min)</label>
             <input id="sb-pass" type="password" placeholder="••••••••" autocomplete="current-password">
           </div>
           <button class="btn" onclick="authLogin()" style="width:100%;padding:14px;font-size:15px">Se connecter</button>
-          <button class="btn btn-ghost" onclick="authSignup()" style="width:100%;padding:12px;font-size:13px">Créer un compte</button>
+          <button class="btn btn-ghost" onclick="authSignup()" style="width:100%;padding:12px">Créer un compte</button>
         </div>
-
-        <!-- Connecté -->
         <div id="auth-connected" style="display:none;flex-direction:column;gap:10px">
           <div id="auth-connected-info"></div>
           <button class="btn btn-danger" onclick="authLogout()" style="width:100%;padding:12px">Se déconnecter</button>
@@ -263,64 +329,113 @@ html,body{height:100%;background:var(--bg);color:#f0ede8;font-family:Georgia,ser
   </div>
 </div>
 
-<!-- MODALS -->
-<div class="overlay" id="ov-order" onclick="maybeCloseOrder(event)">
+<!-- MODAL AGENDA -->
+<div class="overlay" id="ov-agenda" onclick="maybeClose('ov-agenda',event)">
+  <div class="modal">
+    <div class="modal-title" id="am-title">Modifier le repas</div>
+
+    <!-- État : formulaire normal -->
+    <div id="am-form">
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">
+        <label class="lbl">NOM DU PLAT</label>
+        <div style="display:flex;gap:6px">
+          <input id="am-plat" class="am-inp" type="text" placeholder="ex: Poulet rôti, Salade niçoise…" style="flex:1">
+          <button class="btn btn-ai btn-sm" onclick="aiGetIngredients()" title="IA : trouver les ingrédients">✨ Auto</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">
+        <label class="lbl">NOMBRE DE PERSONNES</label>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="btn btn-ghost btn-sm" onclick="changePersonnes(-1)" style="width:36px;padding:6px;font-size:18px;text-align:center">−</button>
+          <span id="am-personnes-val" style="font-family:'Courier New',monospace;font-size:16px;color:#f5c842;min-width:30px;text-align:center;font-weight:bold">4</span>
+          <button class="btn btn-ghost btn-sm" onclick="changePersonnes(1)" style="width:36px;padding:6px;font-size:18px;text-align:center">+</button>
+          <span style="font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.4)">personnes</span>
+        </div>
+      </div>
+      <div id="am-ai-status" style="display:none" class="ai-loading">
+        <span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>
+        <span id="am-ai-msg">Recherche des ingrédients…</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">
+        <label class="lbl">INGRÉDIENTS</label>
+        <div id="am-ing-list"></div>
+        <button class="btn btn-ghost btn-sm" onclick="amAddIng()" style="width:100%">+ Ajouter un ingrédient</button>
+      </div>
+      <button class="btn" onclick="amSave()" style="width:100%;padding:13px;font-size:15px">Enregistrer</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeOverlay('ov-agenda')" style="width:100%;margin-top:4px">Annuler</button>
+    </div>
+
+    <!-- État : suggestions IA -->
+    <div id="am-suggestions" style="display:none;flex-direction:column;gap:10px">
+      <div class="lbl">IDÉES DE REPAS — choisissez-en un</div>
+      <div id="am-sugg-cards" class="sugg-cards"></div>
+      <button class="btn btn-ghost btn-sm" onclick="showAmForm()" style="width:100%">← Retour</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL ORDER -->
+<div class="overlay" id="ov-order" onclick="maybeClose('ov-order',event)">
   <div class="modal">
     <div class="modal-title">Ordre des rayons — glisser pour réordonner</div>
     <div id="order-list"></div>
-    <button class="btn" style="width:100%;margin-top:6px" onclick="closeOrder()">Fermer</button>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="closeOverlay('ov-order')">Fermer</button>
   </div>
 </div>
-<div class="overlay" id="ov-bi" onclick="maybeCloseBI(event)">
+
+<!-- MODAL BUDGET -->
+<div class="overlay" id="ov-bi" onclick="maybeClose('ov-bi',event)">
   <div class="modal">
     <div class="modal-title">Détail estimations — Carrefour France 2025</div>
     <div id="bi-rows"></div>
-    <div class="bi-note">Bas = MDD / premier prix · Haut = marque nationale</div>
-    <button class="btn" style="width:100%;margin-top:4px" onclick="closeBI()">Fermer</button>
+    <div style="font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.3);line-height:1.6;padding-top:4px">Bas = MDD / premier prix · Haut = marque nationale</div>
+    <button class="btn" style="width:100%;margin-top:4px" onclick="closeOverlay('ov-bi')">Fermer</button>
   </div>
 </div>
+
 <div id="toast"></div>
 
 <script>
-// ─── UTILITAIRES ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// UTILITAIRES
+// ═══════════════════════════════════════════════════════════════
 function nrm(s){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019\u02bc']/g,' ').replace(/\s+/g,' ').trim();}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
 function fmt(n){return n.toFixed(2).replace('.',',');}
-function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('on');},2400);}
-function readCookie(name){var m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));return m?decodeURIComponent(m[2]):null;}
-function writeCookie(name,val){var e=new Date();e.setFullYear(e.getFullYear()+1);document.cookie=name+'='+encodeURIComponent(val)+'; expires='+e.toUTCString()+'; path=/; SameSite=Lax';}
-function deleteCookie(name){document.cookie=name+'=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';}
+function toast(msg,dur){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('on');},dur||2400);}
+function readCookie(n){var m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?decodeURIComponent(m[2]):null;}
+function writeCookie(n,v){var e=new Date();e.setFullYear(e.getFullYear()+1);document.cookie=n+'='+encodeURIComponent(v)+'; expires='+e.toUTCString()+'; path=/; SameSite=Lax';}
+function deleteCookie(n){document.cookie=n+'=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';}
+function closeOverlay(id){document.getElementById(id).classList.remove('on');}
+function maybeClose(id,e){if(e.target===document.getElementById(id))closeOverlay(id);}
 
-// ─── SUPABASE AUTH ────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE AUTH
+// ═══════════════════════════════════════════════════════════════
 var SB_URL='https://nhuocsprmxbpuksaufjq.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5odW9jc3BybXhicHVrc2F1ZmpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTE3MjgsImV4cCI6MjA4OTQ4NzcyOH0.q_uy3WoKhI3h8IRrWeDl9dHMQvd3jNyvdey5b-PKga8';
-var authToken=null, authUserId=null, sbCfg=null, supabase=null, syncPaused=false;
+var authToken=null,authUserId=null,sbCfg=null,supabase=null,syncPaused=false;
 
 function setSyncStatus(type,msg){var b=document.getElementById('sync-status-box');b.className='sync-status '+type;b.textContent=msg;}
-function setSyncDot(color){var d=document.getElementById('sync-dot');d.className=color?'on '+color:'';}
+function setSyncDot(c){var d=document.getElementById('sync-dot');d.className=c?'on '+c:'';}
 function setSyncIcon(ok){document.getElementById('sync-btn').className=ok?'connected':'';setSyncDot(ok?'green':'orange');}
 
 async function sbAuthPost(path,body){
   var r=await fetch(SB_URL+'/auth/v1/'+path,{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
   return r.json();
 }
-async function refreshToken(refreshTok){
-  if(!refreshTok) return false;
-  try{
-    var d=await sbAuthPost('token?grant_type=refresh_token',{refresh_token:refreshTok});
-    if(d.access_token){
-      await afterAuth(d, sbCfg?sbCfg.email:'');
-      return true;
-    }
-  }catch(e){}
-  return false;
-}
-
 async function sbRest(path,method,body){
   var h={'apikey':SB_KEY,'Authorization':'Bearer '+(authToken||SB_KEY),'Content-Type':'application/json','Prefer':'return=minimal'};
   var o={method:method||'GET',headers:h};
   if(body) o.body=JSON.stringify(body);
   return fetch(SB_URL+'/rest/v1/'+path,o);
+}
+
+async function refreshToken(rt){
+  if(!rt) return false;
+  try{var d=await sbAuthPost('token?grant_type=refresh_token',{refresh_token:rt});if(d.access_token){await afterAuth(d,sbCfg?sbCfg.email:'');return true;}}catch(e){}
+  return false;
 }
 
 async function authSignup(){
@@ -330,9 +445,9 @@ async function authSignup(){
   if(pass.length<6){setSyncStatus('err','Mot de passe : 6 caractères minimum.');return;}
   setSyncStatus('info','Création du compte…');
   var d=await sbAuthPost('signup',{email:email,password:pass});
-  if(d.error){setSyncStatus('err',d.error.message||'Erreur création compte.');return;}
-  if(d.access_token){await afterAuth(d,email);}
-  else{setSyncStatus('ok','✓ Compte créé ! Cliquez maintenant sur "Se connecter".');}
+  if(d.error){setSyncStatus('err',d.error.message||'Erreur.');return;}
+  if(d.access_token) await afterAuth(d,email);
+  else setSyncStatus('ok','✓ Compte créé ! Cliquez sur "Se connecter".');
 }
 
 async function authLogin(){
@@ -346,22 +461,18 @@ async function authLogin(){
 }
 
 async function afterAuth(d,email){
-  authToken=d.access_token;
-  authUserId=d.user?d.user.id:null;
-  sbCfg={listKey:authUserId,email:email};
-  supabase=true;
-  // Sauvegarde aussi le refresh_token pour renouveler la session
+  authToken=d.access_token;authUserId=d.user?d.user.id:null;
+  sbCfg={listKey:authUserId,email:email};supabase=true;
   var store=JSON.stringify({token:authToken,refreshToken:d.refresh_token||null,userId:authUserId,email:email});
-  localStorage.setItem('crs_auth',store);
-  writeCookie('crs_auth',store);
-  setSyncStatus('ok','✓ Connecté — '+email);
-  setSyncIcon(true);
+  localStorage.setItem('crs_auth',store);writeCookie('crs_auth',store);
+  setSyncStatus('ok','✓ Connecté — '+email);setSyncIcon(true);
   document.getElementById('auth-form').style.display='none';
   document.getElementById('auth-connected').style.display='flex';
   document.getElementById('auth-connected-info').textContent='Connecté : '+email;
   document.getElementById('setup-banner').classList.add('hide');
   var pulled=await pullFromSupabase();
   if(!pulled) await pushToSupabase();
+  await loadMenuFromSupabase();
   startRealtimeSync();
   renderList();renderFavs();
   toast('☁️ Synchronisation active !');
@@ -370,10 +481,8 @@ async function afterAuth(d,email){
 async function authLogout(){
   clearInterval(window._syncInterval);
   authToken=null;authUserId=null;supabase=null;sbCfg=null;
-  localStorage.removeItem('crs_auth');
-  deleteCookie('crs_auth');
-  setSyncStatus('info','Déconnecté.');
-  setSyncIcon(false);
+  localStorage.removeItem('crs_auth');deleteCookie('crs_auth');
+  setSyncStatus('info','Déconnecté.');setSyncIcon(false);
   document.getElementById('auth-form').style.display='flex';
   document.getElementById('auth-connected').style.display='none';
   document.getElementById('setup-banner').classList.remove('hide');
@@ -398,9 +507,7 @@ async function pullFromSupabase(){
     var rows=await r.json();
     if(rows&&rows.length>0&&rows[0].data){
       var d=rows[0].data;
-      if(d.items) items=d.items;
-      if(d.favs) favs=d.favs;
-      if(d.catOrder) catOrder=d.catOrder;
+      if(d.items) items=d.items;if(d.favs) favs=d.favs;if(d.catOrder) catOrder=d.catOrder;
       save();return true;
     }
   }catch(e){console.warn('pull',e);}
@@ -421,22 +528,138 @@ function saveAndSync(){
   if(supabase&&sbCfg&&authToken){syncPaused=true;pushToSupabase().then(function(){syncPaused=false;});}
 }
 
-// ─── BASE DE DONNÉES PRIX ────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// API CLAUDE — ingrédients & suggestions
+// ═══════════════════════════════════════════════════════════════
+async function callClaude(prompt, sys){
+  var resp = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      system: sys||'Tu es un assistant culinaire français. Réponds uniquement en JSON valide, sans markdown.',
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  var data=await resp.json();
+  if(data.content&&data.content[0]) return data.content[0].text;
+  return null;
+}
+
+var amPersonnes = 4;
+
+function changePersonnes(delta){
+  amPersonnes = Math.max(1, Math.min(12, amPersonnes + delta));
+  document.getElementById('am-personnes-val').textContent = amPersonnes;
+}
+
+async function aiGetIngredients(){
+  var plat=document.getElementById('am-plat').value.trim();
+  if(!plat){toast('Tapez d\'abord un nom de plat !');return;}
+  var status=document.getElementById('am-ai-status');
+  var msg=document.getElementById('am-ai-msg');
+  status.style.display='flex';msg.textContent='Recherche des ingrédients pour "'+plat+'"…';
+  try{
+    var txt=await callClaude(
+      'Donne-moi la liste des ingrédients pour "'+plat+'" pour '+amPersonnes+' personne'+(amPersonnes>1?'s':'')+'. Réponds UNIQUEMENT avec ce JSON: {"ingredients":[{"name":"tomate","qty":"4"},{"name":"huile d\'olive","qty":"2 cs"}]}',
+      'Tu es un assistant culinaire français. Réponds uniquement en JSON valide, sans markdown ni explication.'
+    );
+    if(!txt) throw new Error('no response');
+    var clean=txt.replace(/```json|```/g,'').trim();
+    var parsed=JSON.parse(clean);
+    if(parsed.ingredients&&parsed.ingredients.length){
+      renderAmIngList(parsed.ingredients);
+      status.style.display='none';
+      toast('✨ '+parsed.ingredients.length+' ingrédients trouvés !');
+    } else throw new Error('empty');
+  }catch(e){
+    status.style.display='none';
+    toast('Erreur IA — ajoutez les ingrédients manuellement');
+  }
+}
+
+async function aiSuggestMeals(jour,repas){
+  var status=document.getElementById('am-ai-status');
+  var msg=document.getElementById('am-ai-msg');
+  var amSuggCards=document.getElementById('am-sugg-cards');
+  status.style.display='flex';msg.textContent='Génération de suggestions pour '+jour+' '+repas+'…';
+  document.getElementById('am-form').style.display='none';
+  document.getElementById('am-suggestions').style.display='flex';
+  amSuggCards.innerHTML='<div class="ai-loading"><span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span><span>Recherche d\'idées…</span></div>';
+  try{
+    var saison=getSaison();
+    var txt=await callClaude(
+      'Propose 3 idées de '+repas.toLowerCase()+' pour '+jour+' (saison: '+saison+', '+amPersonnes+' personne'+(amPersonnes>1?'s':'')+').  Réponds UNIQUEMENT avec ce JSON: {"suggestions":[{"nom":"Poulet rôti","description":"Classique français facile","temps":"45min","ingredients":[{"name":"poulet","qty":"1"},{"name":"ail","qty":"3 gousses"}]}]}',
+      'Tu es un chef cuisinier français. Réponds uniquement en JSON valide, sans markdown.'
+    );
+    status.style.display='none';
+    if(!txt) throw new Error('no response');
+    var clean=txt.replace(/```json|```/g,'').trim();
+    var parsed=JSON.parse(clean);
+    amSuggCards.innerHTML='';
+    if(parsed.suggestions&&parsed.suggestions.length){
+      parsed.suggestions.forEach(function(s){
+        var card=document.createElement('div');card.className='sugg-card';
+        // Photo via Unsplash
+        var imgUrl='https://source.unsplash.com/400x200/?'+encodeURIComponent(s.nom+' food french');
+        var ingTxt=s.ingredients?s.ingredients.slice(0,4).map(function(i){return i.qty?i.qty+' '+i.name:i.name;}).join(', ')+'…':'';
+        card.innerHTML=
+          '<img class="sugg-card-img" src="'+imgUrl+'" alt="'+s.nom+'" onerror="this.style.display=\'none\'">'+
+          '<div class="sugg-card-body">'+
+          '<div class="sugg-card-name">'+s.nom+'</div>'+
+          '<div class="sugg-card-desc">'+s.description+(s.temps?' · '+s.temps:'')+'</div>'+
+          (ingTxt?'<div class="sugg-card-ing">'+ingTxt+'</div>':'')+
+          '</div>';
+        card.onclick=(function(sugg){return function(){
+          document.getElementById('am-plat').value=sugg.nom;
+          renderAmIngList(sugg.ingredients||[]);
+          document.getElementById('am-suggestions').style.display='none';
+          document.getElementById('am-form').style.display='flex';
+          toast('✨ '+sugg.nom+' sélectionné !');
+        };})(s);
+        amSuggCards.appendChild(card);
+      });
+    } else throw new Error('empty');
+  }catch(e){
+    status.style.display='none';
+    amSuggCards.innerHTML='<div style="font-family:Courier New,monospace;font-size:12px;color:rgba(255,255,255,.4);text-align:center;padding:16px">Impossible de générer des suggestions.<br>Entrez un plat manuellement.</div>';
+  }
+}
+
+function getSaison(){
+  var m=new Date().getMonth();
+  if(m>=2&&m<=4) return 'printemps';
+  if(m>=5&&m<=7) return 'été';
+  if(m>=8&&m<=10) return 'automne';
+  return 'hiver';
+}
+
+function showAmForm(){
+  document.getElementById('am-suggestions').style.display='none';
+  document.getElementById('am-form').style.display='flex';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BASE DE DONNÉES PRIX
+// ═══════════════════════════════════════════════════════════════
 var DB={'tomate cerise':[2.5,4.5,'€/barq.',250],'tomate':[1.8,3.5,'€/kg',120],'carotte':[0.9,1.8,'€/kg',100],'courgette':[1.5,2.8,'€/kg',250],'poivron':[2.0,3.5,'€/kg',200],'aubergine':[2.0,3.2,'€/kg',300],'brocoli':[1.8,2.8,'€/pièce',400],'chou-fleur':[1.5,2.5,'€/pièce',700],'epinard':[1.8,3.0,'€/sachet',300],'salade':[1.0,1.8,'€/pièce',300],'laitue':[1.0,1.8,'€/pièce',300],'mache':[1.5,2.5,'€/sachet',100],'roquette':[1.5,2.5,'€/sachet',100],'poireau':[1.5,2.5,'€/kg',200],'haricot vert':[2.0,3.5,'€/kg',500],'petit pois':[1.5,3.0,'€/kg',500],'pois chiche':[0.9,2.0,'€/boîte',400],'lentille':[1.0,2.5,'€/kg',500],'concombre':[0.8,1.5,'€/pièce',400],'radis':[0.8,1.5,'€/botte',200],'betterave':[1.0,2.0,'€/kg',300],'asperge':[3.5,7.0,'€/botte',500],'artichaut':[1.5,3.0,'€/pièce',300],'champignon':[2.0,3.5,'€/barq.',250],'oignon':[0.8,1.5,'€/kg',100],'echalote':[2.0,3.5,'€/kg',50],'ail':[1.5,3.0,'€/tête',40],'gingembre':[2.0,4.0,'€/100g',50],'pomme de terre':[0.8,1.5,'€/kg',1000],'patate douce':[1.5,2.8,'€/kg',300],'avocat':[0.9,1.8,'€/pièce',180],'fenouil':[1.2,2.2,'€/pièce',400],'celeri':[1.5,2.5,'€/pied',500],'potimarron':[1.5,2.5,'€/kg',1200],'courge':[1.5,3.0,'€/kg',1000],'piment':[1.5,3.0,'€/kg',30],'mais':[0.5,1.2,'€/épi',300],'endive':[1.5,2.5,'€/kg',120],'persil':[0.7,1.2,'€/botte',50],'basilic':[1.0,2.0,'€/pot',30],'menthe':[0.8,1.5,'€/botte',30],'ciboulette':[0.8,1.5,'€/botte',30],'thym':[0.8,1.5,'€/botte',25],'romarin':[0.8,1.5,'€/botte',25],'estragon':[0.8,1.5,'€/botte',25],'coriandre':[0.8,1.5,'€/botte',25],'pomme':[1.5,2.5,'€/kg',180],'poire':[1.8,3.0,'€/kg',180],'banane':[1.2,1.8,'€/kg',120],'orange':[1.2,2.0,'€/kg',200],'citron':[1.5,2.5,'€/filet',100],'lime':[0.5,1.0,'€/pièce',80],'mandarine':[1.8,3.0,'€/kg',100],'clementine':[1.8,3.0,'€/kg',100],'raisin':[2.5,4.5,'€/kg',1000],'fraise':[3.0,5.5,'€/barq.',250],'framboise':[3.0,5.5,'€/barq.',125],'kiwi':[1.5,2.5,'€/kg',80],'ananas':[1.5,3.0,'€/pièce',1000],'mangue':[1.5,3.0,'€/pièce',400],'melon':[1.5,3.0,'€/pièce',1200],'pasteque':[1.0,2.0,'€/kg',3000],'figue':[2.5,4.5,'€/barq.',200],'noix de coco':[1.5,2.5,'€/pièce',400],'grenade':[1.5,3.0,'€/pièce',300],'abricot':[3.0,5.5,'€/kg',50],'peche':[2.5,4.5,'€/kg',150],'nectarine':[2.5,4.5,'€/kg',150],'cerise':[5.0,9.0,'€/kg',8],'myrtille':[3.5,6.0,'€/barq.',125],'poulet':[5.0,10.0,'€/kg',1200],'boeuf':[10.0,18.0,'€/kg',500],'veau':[12.0,20.0,'€/kg',400],'porc':[6.0,11.0,'€/kg',500],'agneau':[12.0,22.0,'€/kg',500],'dinde':[6.0,10.0,'€/kg',600],'canard':[8.0,15.0,'€/kg',800],'lapin':[7.0,13.0,'€/kg',800],'jambon':[2.5,5.0,'€/paquet',200],'bacon':[2.0,4.0,'€/paquet',150],'lardon':[1.5,3.0,'€/paquet',200],'saucisse':[2.5,4.5,'€/paquet',360],'merguez':[3.0,5.0,'€/paquet',360],'chipolata':[2.5,4.5,'€/paquet',360],'steak':[4.0,8.0,'€/paquet',300],'hache':[4.0,7.0,'€/paquet',400],'escalope':[5.0,9.0,'€/paquet',300],'roti':[7.0,14.0,'€/pièce',800],'chorizo':[2.0,4.5,'€/paquet',200],'saumon':[7.0,14.0,'€/kg',400],'thon':[3.0,6.0,'€/boîte',160],'cabillaud':[8.0,15.0,'€/kg',400],'dorade':[7.0,13.0,'€/pièce',400],'crevette':[8.0,15.0,'€/kg',300],'moule':[2.0,4.0,'€/kg',1000],'sardine':[1.5,3.5,'€/boîte',135],'maquereau':[1.5,3.0,'€/boîte',200],'anchois':[2.0,4.5,'€/boîte',50],'camembert':[2.0,4.0,'€/pièce',250],'brie':[3.0,6.0,'€/pièce',500],'comte':[3.0,6.0,'€/200g',200],'emmental':[2.0,3.5,'€/paquet',400],'gruyere':[2.0,3.5,'€/paquet',200],'mozzarella':[1.2,2.5,'€/boule',125],'parmesan':[2.5,5.0,'€/100g',100],'ricotta':[1.5,2.8,'€/250g',250],'mascarpone':[1.8,3.0,'€/250g',250],'feta':[2.0,4.0,'€/200g',200],'chevre':[2.0,4.5,'€/pièce',120],'reblochon':[3.0,5.5,'€/pièce',450],'raclette':[3.5,6.5,'€/paquet',400],'fromage blanc':[1.5,2.5,'€/500g',500],'roquefort':[3.0,6.0,'€/200g',200],'lait':[0.9,1.5,'€/L',1000],'beurre':[2.0,4.0,'€/250g',250],'creme fraiche':[1.0,2.0,'€/200g',200],'creme liquide':[1.0,2.0,'€/200ml',200],'creme':[1.0,2.0,'€/200ml',200],'yaourt':[2.0,3.5,'€/pack',500],'oeuf':[2.5,4.5,'€/boîte 12',660],'margarine':[1.5,3.0,'€/250g',250],'pain de mie':[1.2,2.5,'€/paquet',500],'pate feuilletee':[1.5,2.5,'€/rouleau',230],'pate brisee':[1.0,2.0,'€/rouleau',230],'pain':[0.9,1.8,'€/pièce',400],'baguette':[0.9,1.3,'€/pièce',250],'brioche':[2.0,3.5,'€/pièce',400],'croissant':[0.9,1.5,'€/pièce',80],'flocons d avoine':[1.5,2.8,'€/kg',1000],'spaghetti':[0.8,2.5,'€/500g',500],'linguine':[1.0,2.8,'€/500g',500],'tagliatelle':[1.0,2.8,'€/500g',500],'penne':[0.8,2.5,'€/500g',500],'fusilli':[0.8,2.5,'€/500g',500],'lasagne':[1.0,3.0,'€/500g',500],'gnocchi':[1.2,2.5,'€/500g',500],'pates':[0.8,2.5,'€/500g',500],'riz':[0.9,2.5,'€/kg',1000],'quinoa':[2.5,4.5,'€/500g',500],'boulgour':[2.0,3.5,'€/500g',500],'semoule':[1.0,2.0,'€/kg',1000],'couscous':[1.0,2.0,'€/500g',500],'farine':[0.8,1.8,'€/kg',1000],'polenta':[1.5,2.5,'€/kg',1000],'cereales':[2.5,5.0,'€/boîte',375],'huile d olive':[3.5,8.0,'€/L',1000],'huile de tournesol':[2.0,4.0,'€/L',1000],'huile de sesame':[3.0,6.0,'€/250ml',250],'huile':[2.0,5.0,'€/L',1000],'sel':[0.4,1.2,'€/kg',1000],'poivre':[1.5,3.5,'€/flacon',50],'sucre':[1.2,2.0,'€/kg',1000],'miel':[3.0,6.0,'€/500g',500],'confiture':[2.0,4.0,'€/pot',370],'pesto':[2.0,4.5,'€/pot',190],'concentre de tomate':[0.8,2.0,'€/tube',200],'tomate pelee':[0.8,1.8,'€/boîte',400],'olive':[2.0,4.0,'€/pot',180],'cornichon':[1.5,2.8,'€/pot',200],'moutarde':[1.2,2.5,'€/pot',200],'mayonnaise':[1.5,3.0,'€/tube',320],'ketchup':[1.5,2.8,'€/flacon',560],'sauce soja':[1.5,3.0,'€/flacon',150],'vinaigre balsamique':[2.0,5.0,'€/flacon',250],'vinaigre de cidre':[1.5,3.0,'€/flacon',500],'vinaigre':[0.8,2.0,'€/flacon',500],'bouillon':[1.5,2.5,'€/pack',72],'cumin':[1.0,2.5,'€/flacon',40],'curcuma':[1.0,2.5,'€/flacon',40],'paprika':[1.0,2.5,'€/flacon',50],'curry':[1.0,2.5,'€/flacon',40],'cannelle':[1.0,2.5,'€/flacon',30],'muscade':[1.5,3.0,'€/flacon',30],'levure':[0.5,1.5,'€/sachet',11],'noix':[3.0,6.0,'€/200g',200],'noisette':[2.5,5.0,'€/200g',200],'amande':[3.0,6.0,'€/200g',200],'pistache':[3.5,7.0,'€/150g',150],'chapelure':[1.0,2.0,'€/500g',500],'maizena':[1.0,2.0,'€/250g',250],'nutella':[3.5,5.5,'€/400g',400],'pate a tartiner':[2.5,5.5,'€/400g',400],'speculoos':[1.5,3.0,'€/paquet',250],'oreo':[2.0,3.5,'€/paquet',154],'biscuit':[1.5,3.5,'€/paquet',200],'cookie':[1.5,3.5,'€/paquet',200],'madeleine':[1.5,3.0,'€/paquet',300],'palmier':[1.5,3.0,'€/paquet',200],'chips':[1.5,3.5,'€/paquet',150],'pringles':[2.0,3.5,'€/boîte',185],'pop corn':[1.5,3.0,'€/paquet',100],'cacahuete':[1.5,3.5,'€/paquet',200],'noix de cajou':[2.5,5.0,'€/paquet',150],'kinder':[1.5,4.0,'€/paquet',100],'haribo':[1.5,3.0,'€/sachet',200],'carambar':[1.5,2.5,'€/sachet',120],'coca-cola':[1.5,3.5,'€/1.5L',1500],'coca cola':[1.5,3.5,'€/1.5L',1500],'pepsi':[1.2,3.0,'€/1.5L',1500],'fanta':[1.2,3.0,'€/1.5L',1500],'sprite':[1.2,3.0,'€/1.5L',1500],'orangina':[1.5,3.0,'€/1.5L',1500],'oasis':[1.2,2.8,'€/1.5L',1500],'schweppes':[1.5,3.0,'€/1L',1000],'redbull':[1.5,2.5,'€/25cl',250],'red bull':[1.5,2.5,'€/25cl',250],'monster':[1.5,2.5,'€/50cl',500],'perrier':[1.0,2.0,'€/75cl',750],'badoit':[0.8,1.8,'€/1L',1000],'evian':[0.5,1.5,'€/1.5L',1500],'volvic':[0.5,1.5,'€/1.5L',1500],'cristaline':[0.3,0.8,'€/1.5L',1500],'vittel':[0.5,1.5,'€/1.5L',1500],'tropicana':[2.0,3.5,'€/1L',1000],'innocent':[2.5,4.0,'€/90cl',900],'nescafe':[3.0,7.0,'€/200g',200],'kronenbourg':[5.0,9.0,'€/pack 6',198],'heineken':[6.0,10.0,'€/pack 6',198],'leffe':[6.0,11.0,'€/pack 6',198],'ricard':[18.0,25.0,'€/70cl',700],'pastis':[8.0,18.0,'€/70cl',700],'whisky':[15.0,35.0,'€/70cl',700],'rhum':[12.0,25.0,'€/70cl',700],'vodka':[10.0,25.0,'€/70cl',700],'gin':[12.0,28.0,'€/70cl',700],'eau gazeuse':[0.3,1.0,'€/1.5L',1500],'eau':[0.2,0.8,'€/1.5L',1500],'jus d orange':[1.5,3.5,'€/L',1000],'jus de pomme':[1.0,2.5,'€/L',1000],'cafe':[3.0,8.0,'€/250g',250],'the':[2.0,4.5,'€/boîte',25],'vin rouge':[4.0,12.0,'€/btl',750],'vin blanc':[4.0,12.0,'€/btl',750],'vin rose':[4.0,10.0,'€/btl',750],'vin':[4.0,12.0,'€/btl',750],'biere':[5.0,10.0,'€/pack',2000],'cidre':[3.0,6.0,'€/btl',750],'lait d amande':[1.5,2.8,'€/L',1000],'lait de coco':[1.0,2.0,'€/400ml',400],'lait de soja':[1.0,2.0,'€/L',1000],'lait d avoine':[1.5,2.8,'€/L',1000],'haagen dazs':[4.0,7.0,'€/pot',460],'ben jerry':[4.5,7.0,'€/pot',465],'carte d or':[3.0,5.5,'€/pot',900],'mccain':[2.0,4.0,'€/paquet',600],'glace':[2.0,5.0,'€/pot',500],'sorbet':[2.0,4.5,'€/pot',500],'papier toilette':[3.0,7.0,'€/pack',800],'lessive':[5.0,12.0,'€/paquet',2000],'liquide vaisselle':[1.5,3.5,'€/flacon',500],'shampoing':[2.0,7.0,'€/flacon',400],'gel douche':[1.5,5.0,'€/flacon',400],'savon':[1.0,3.5,'€/pièce',100],'dentifrice':[1.5,4.0,'€/tube',100],'deodorant':[2.0,5.0,'€/pièce',150],'rasoir':[3.0,8.0,'€/pièce',80]};
 var DB_KEYS=Object.keys(DB).sort(function(a,b){return b.length-a.length;});
-
 function lookupDB(name){var n=nrm(name);for(var i=0;i<DB_KEYS.length;i++){if(n.indexOf(nrm(DB_KEYS[i]))!==-1)return{key:DB_KEYS[i],d:DB[DB_KEYS[i]]};}return null;}
-function parseMult(q,name){if(!q||!q.trim())return{mult:1,label:''};var s=q.trim().toLowerCase().replace(',','.');var e=lookupDB(name);var rg=e?e.d[3]:null;var mm=s.match(/^(\d+(?:\.\d+)?)\s*(g|kg|mg)$/);if(mm){var v=parseFloat(mm[1]),u=mm[2],g=u==='kg'?v*1000:u==='mg'?v/1000:v;if(rg&&rg>0){var u2=Math.max(1,Math.ceil(g/rg));return{mult:u2,label:g+'g\u2192\xd7'+u2};}return{mult:1,label:''};}var vm=s.match(/^(\d+(?:\.\d+)?)\s*(ml|cl|dl|l)$/);if(vm){var v2=parseFloat(vm[1]),u3=vm[2],ml=u3==='l'?v2*1000:u3==='dl'?v2*100:u3==='cl'?v2*10:v2;if(rg&&rg>0){var u4=Math.max(1,Math.ceil(ml/rg));return{mult:u4,label:ml+'ml\u2192\xd7'+u4};}return{mult:1,label:''};}var nm=s.match(/^x?(\d+(?:\.\d+)?)$/);if(nm){var n2=Math.ceil(parseFloat(nm[1]));if(!isNaN(n2)&&n2>0&&n2<=200)return{mult:n2,label:n2>1?'\xd7'+n2:''};}return{mult:1,label:''};}
+function parseMult(q,name){if(!q||!q.trim())return{mult:1,label:''};var s=q.trim().toLowerCase().replace(',','.');var e=lookupDB(name);var rg=e?e.d[3]:null;var mm=s.match(/^(\d+(?:\.\d+)?)\s*(g|kg|mg)$/);if(mm){var v=parseFloat(mm[1]),u=mm[2],g=u==='kg'?v*1000:u==='mg'?v/1000:v;if(rg&&rg>0){var u2=Math.max(1,Math.ceil(g/rg));return{mult:u2,label:g+'g→×'+u2};}return{mult:1,label:''};}var vm=s.match(/^(\d+(?:\.\d+)?)\s*(ml|cl|dl|l)$/);if(vm){var v2=parseFloat(vm[1]),u3=vm[2],ml=u3==='l'?v2*1000:u3==='dl'?v2*100:u3==='cl'?v2*10:v2;if(rg&&rg>0){var u4=Math.max(1,Math.ceil(ml/rg));return{mult:u4,label:ml+'ml→×'+u4};}return{mult:1,label:''};}var nm=s.match(/^x?(\d+(?:\.\d+)?)$/);if(nm){var n2=Math.ceil(parseFloat(nm[1]));if(!isNaN(n2)&&n2>0&&n2<=200)return{mult:n2,label:n2>1?'×'+n2:''};}return{mult:1,label:''};}
 function calcPrice(item){var e=lookupDB(item.name);if(!e)return null;var pm=parseMult(item.qty,item.name);return{lo:e.d[0]*pm.mult,hi:e.d[1]*pm.mult,unit:e.d[2],mult:pm.mult,label:pm.label};}
 
-// ─── CATÉGORIES ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// CATÉGORIES
+// ═══════════════════════════════════════════════════════════════
 var CATS=[{id:'fl',name:'Fruits & Légumes',emoji:'🥦'},{id:'vi',name:'Viandes',emoji:'🥩'},{id:'po',name:'Poissons',emoji:'🐟'},{id:'fr',name:'Fromages & Frais',emoji:'🧀'},{id:'la',name:'Produits laitiers',emoji:'🥛'},{id:'bo',name:'Boulangerie',emoji:'🥖'},{id:'fe',name:'Féculents',emoji:'🌾'},{id:'co',name:'Épicerie & Snacks',emoji:'🥫'},{id:'bv',name:'Boissons',emoji:'🧃'},{id:'su',name:'Surgelés',emoji:'❄️'},{id:'br',name:'Bricolage',emoji:'🔧'},{id:'sa',name:'Santé',emoji:'💊'},{id:'hy',name:'Hygiène',emoji:'🧴'},{id:'an',name:'Animaux',emoji:'🐾'},{id:'au',name:'Autre',emoji:'🛒'}];
 var KW={fl:['pomme de terre','tomate cerise','tomate','salade','laitue','carotte','courgette','poivron','aubergine','brocoli','chou-fleur','epinard','poireau','haricot vert','petit pois','pois chiche','lentille','mais','concombre','radis','betterave','asperge','artichaut','fenouil','celeri','courge','champignon','oignon','echalote','ail','gingembre','roquette','mache','endive','patate douce','piment','persil','ciboulette','estragon','menthe','basilic','thym','romarin','coriandre','pomme','poire','banane','orange','citron','lime','mandarine','clementine','raisin','fraise','framboise','myrtille','abricot','peche','nectarine','cerise','kiwi','ananas','mangue','melon','pasteque','figue','avocat','noix de coco','grenade','groseille','cassis'],vi:['poulet','boeuf','veau','porc','agneau','dinde','canard','lapin','saucisse','merguez','chipolata','jambon','bacon','lardon','steak','escalope','cotelette','entrecote','roti','hache','foie','boudin','chorizo','salami','pancetta'],po:['saumon','thon','cabillaud','merlu','sole','dorade','bar','sardine','maquereau','hareng','truite','colin','rouget','lotte','crevette','gambas','langouste','homard','crabe','moule','huitre','palourde','poulpe','calmar','anchois','fletan','turbot'],fr:['camembert','brie','comte','emmental','gruyere','cheddar','gouda','mozzarella','parmesan','ricotta','mascarpone','boursin','roquefort','gorgonzola','feta','chevre','reblochon','munster','tomme','raclette','beaufort','cantal','mimolette','fromage blanc','fromage frais'],la:['lait','beurre','creme fraiche','creme liquide','creme','yaourt','skyr','oeuf','margarine'],bo:['pate feuilletee','pate brisee','pain de mie','pain','baguette','brioche','croissant','pain au chocolat','focaccia','naan','pita','tortilla','bagel'],fe:['flocons d avoine','linguine','spaghetti','tagliatelle','penne','fusilli','rigatoni','farfalle','lasagne','ravioli','gnocchi','pates','riz','quinoa','boulgour','semoule','couscous','polenta','maizena','farine','cereales','granola'],co:['huile d olive','huile de tournesol','huile de sesame','tomate pelee','concentre de tomate','vinaigre balsamique','vinaigre de cidre','pate a tartiner','noix de cajou','sauce soja','olive','cornichon','capre','bouillon','ketchup','mayonnaise','moutarde','vinaigre','huile','sel','poivre','cumin','curcuma','paprika','curry','cannelle','muscade','levure','sucre','miel','confiture','pesto','noix','noisette','amande','pistache','chapelure','maizena','nutella','speculoos','oreo','biscuit','cookie','madeleine','palmier','chips','pringles','pop corn','cacahuete','kinder','haribo','carambar'],bv:['coca-cola','coca cola','red bull','jus d orange','jus de pomme','lait d amande','lait de soja','lait d avoine','lait de coco','vin rouge','vin blanc','vin rose','eau gazeuse','pepsi','fanta','sprite','orangina','oasis','schweppes','redbull','monster','perrier','badoit','evian','volvic','cristaline','vittel','tropicana','innocent','nescafe','kronenbourg','heineken','leffe','ricard','pastis','whisky','rhum','vodka','gin','eau','the','cafe','tisane','biere','vin','cidre','champagne'],su:['haagen dazs','ben jerry','carte d or','mccain','pizza surgele','poisson pane','nuggets','frites surgele','legumes surgele','glace','sorbet'],br:['vis','boulon','colle','peinture','ampoule','pile','batterie','tournevis','marteau','perceuse','scie','ruban adhesif','white spirit'],sa:['doliprane','paracetamol','ibuprofene','nurofen','aspirine','advil','pansement','antiseptique','betadine','serum physiologique','spray nasal','collyre','creme solaire','vitamines'],hy:['papier toilette','liquide vaisselle','shampoing','apres shampoing','gel douche','savon','deodorant','dentifrice','brosse a dents','rasoir','mouchoir','lessive','adoucissant','javel','bicarbonate'],an:['royal canin','purina','whiskas','friskies','pedigree','croquette','pate pour chat','pate pour chien','nourriture chat','nourriture chien','litiere','jouet chat','jouet chien','laisse','collier'],au:[]};
 Object.keys(KW).forEach(function(k){KW[k].sort(function(a,b){return b.length-a.length;});});
-
 function detectCat(name){var n=nrm(name);for(var oi=0;oi<catOrder.length;oi++){var id=catOrder[oi];if(id==='au')continue;var list=KW[id]||[];for(var ki=0;ki<list.length;ki++){if(n.indexOf(nrm(list[ki]))!==-1)return id;}}return 'au';}
 
-// ─── ÉTAT ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// ÉTAT
+// ═══════════════════════════════════════════════════════════════
 var items=JSON.parse(localStorage.getItem('crs_items')||'[]');
 var favs=JSON.parse(localStorage.getItem('crs_favs')||'[]');
 var catOrder=(function(){var saved=JSON.parse(localStorage.getItem('crs_order')||'null');var all=CATS.map(function(c){return c.id;});if(!saved)return all;var missing=all.filter(function(id){return saved.indexOf(id)===-1&&id!=='au';});return saved.filter(function(id){return id!=='au';}).concat(missing).concat(['au']);})();
@@ -444,88 +667,356 @@ var collapsed={},encours=false,editId=null,selFavs={},activeTab=0;
 function save(){localStorage.setItem('crs_items',JSON.stringify(items));localStorage.setItem('crs_favs',JSON.stringify(favs));localStorage.setItem('crs_order',JSON.stringify(catOrder));}
 function orderedCats(){return catOrder.map(function(id){return CATS.find(function(c){return c.id===id;});}).filter(Boolean);}
 
-// ─── BUDGET ───────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// AGENDA
+// ═══════════════════════════════════════════════════════════════
+var JOURS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+var REPAS_LIST=['Déjeuner','Dîner'];
+var menuData={};
+var amContext=null;
+
+function getSemaineKey(){
+  var d=new Date(),day=d.getDay(),diff=d.getDate()-(day===0?6:day-1);
+  var lundi=new Date(d.setDate(diff));
+  return lundi.toISOString().slice(0,10);
+}
+function getDateDuJour(ji){
+  var d=new Date(),day=d.getDay(),diff=d.getDate()-(day===0?6:day-1);
+  var l=new Date(new Date().setDate(diff));
+  l.setDate(l.getDate()+ji);
+  return l.getDate()+'/'+(l.getMonth()+1);
+}
+function isTodayIdx(ji){var d=new Date(),dow=d.getDay(),idx=dow===0?6:dow-1;return idx===ji;}
+function menuKey(j,r){return j+'__'+r;}
+
+async function loadMenuFromSupabase(){
+  if(!sbCfg||!authToken) return;
+  var sem=getSemaineKey();
+  try{
+    var r=await sbRest('menu_semaine?list_id=eq.'+encodeURIComponent(sbCfg.listKey)+'&semaine=eq.'+sem,'GET');
+    var rows=await r.json();
+    menuData={};
+    if(rows&&rows.length){rows.forEach(function(row){menuData[menuKey(row.jour,row.repas)]={id:row.id,plat:row.plat,ingredients:row.ingredients||[]};});}
+  }catch(e){console.warn('loadMenu',e);}
+  if(activeTab===3) renderAgenda();
+}
+
+async function saveMenuRow(jour,repas){
+  if(!sbCfg||!authToken) return;
+  var sem=getSemaineKey(),k=menuKey(jour,repas),entry=menuData[k]||{plat:'',ingredients:[]};
+  var payload={list_id:sbCfg.listKey,semaine:sem,jour:jour,repas:repas,plat:entry.plat,ingredients:entry.ingredients,updated_at:new Date().toISOString()};
+  try{
+    if(entry.id){
+      await sbRest('menu_semaine?id=eq.'+entry.id,'PATCH',payload);
+    } else {
+      await sbRest('menu_semaine','POST',payload);
+      var rows=await(await sbRest('menu_semaine?list_id=eq.'+encodeURIComponent(sbCfg.listKey)+'&semaine=eq.'+sem+'&jour=eq.'+encodeURIComponent(jour)+'&repas=eq.'+encodeURIComponent(repas),'GET')).json();
+      if(rows&&rows.length) menuData[k].id=rows[0].id;
+    }
+  }catch(e){console.warn('saveMenuRow',e);}
+}
+
+function renderAgenda(){
+  var c=document.getElementById('agenda-container');
+  if(!c) return;
+  c.innerHTML='';
+  var sem=getSemaineKey();
+  var wk=document.createElement('div');wk.className='agenda-week-label';
+  wk.textContent='Semaine du '+sem.slice(8,10)+'/'+sem.slice(5,7)+'/'+sem.slice(0,4);
+  c.appendChild(wk);
+
+  JOURS.forEach(function(jour,ji){
+    var day=document.createElement('div');day.className='agenda-day';
+    var hdr=document.createElement('div');hdr.className='agenda-day-hdr'+(isTodayIdx(ji)?' today':'');
+    hdr.innerHTML='<span>'+jour+'</span><span class="day-date">'+getDateDuJour(ji)+'</span>';
+    day.appendChild(hdr);
+
+    REPAS_LIST.forEach(function(repas){
+      var k=menuKey(jour,repas),entry=menuData[k]||{plat:'',ingredients:[]};
+      var sec=document.createElement('div');sec.className='agenda-repas';
+
+      var rh=document.createElement('div');rh.className='repas-header';
+      var rl=document.createElement('span');rl.className='repas-label';rl.textContent=repas;
+      rh.appendChild(rl);
+
+      // Photo du plat
+      var photo=document.createElement('img');photo.className='repas-photo'+(entry.plat?'':' hide');
+      if(entry.plat){
+        photo.src='https://source.unsplash.com/400x120/?'+encodeURIComponent(entry.plat+' plat cuisine');
+        photo.alt=entry.plat;
+        photo.onerror=function(){this.classList.add('hide');};
+      }
+
+      var plat=document.createElement('div');plat.className='repas-plat'+(entry.plat?'':' empty');
+      plat.textContent=entry.plat||'Aucun repas planifié';
+
+      var ing=document.createElement('div');ing.className='repas-ing';
+      if(entry.ingredients&&entry.ingredients.length)
+        ing.textContent=entry.ingredients.map(function(i){return i.qty?i.qty+' '+i.name:i.name;}).join(' · ');
+
+      var actions=document.createElement('div');actions.className='repas-actions';
+
+      // Bouton Planifier/Modifier
+      var bEdit=document.createElement('button');bEdit.className='repas-btn rb-edit';
+      bEdit.textContent=entry.plat?'✏️ Modifier':'+ Planifier';
+      bEdit.onclick=(function(j,r){return function(){openAgendaModal(j,r,'form');};})(jour,repas);
+      actions.appendChild(bEdit);
+
+      // Bouton Suggestion IA
+      var bSugg=document.createElement('button');bSugg.className='repas-btn rb-ai';
+      bSugg.textContent='✨ Idées';
+      bSugg.onclick=(function(j,r){return function(){openAgendaModal(j,r,'sugg');};})(jour,repas);
+      actions.appendChild(bSugg);
+
+      // Bouton Ajouter à la liste
+      if(entry.ingredients&&entry.ingredients.length){
+        var bAdd=document.createElement('button');bAdd.className='repas-btn rb-add';
+        bAdd.textContent='🛒 À la liste';
+        bAdd.onclick=(function(ings){return function(){
+          var added=0;
+          ings.forEach(function(i){if(i.name){addItem(i.name,i.qty||'',false);added++;}});
+          toast(added+' ingrédient'+(added>1?'s':'')+' ajouté'+(added>1?'s':'')+' !');
+          gotoTab(0);
+        };})(entry.ingredients);
+        actions.appendChild(bAdd);
+
+        // Bouton supprimer
+        var bDel=document.createElement('button');bDel.className='repas-btn rb-del';
+        bDel.textContent='🗑';
+        bDel.onclick=(function(j,r){return function(){
+          var k2=menuKey(j,r);
+          menuData[k2]={id:menuData[k2]?menuData[k2].id:null,plat:'',ingredients:[]};
+          saveMenuRow(j,r);renderAgenda();
+        };})(jour,repas);
+        actions.appendChild(bDel);
+      }
+
+      sec.append(rh,photo,plat,ing,actions);
+      day.appendChild(sec);
+    });
+    c.appendChild(day);
+  });
+}
+
+function openAgendaModal(jour,repas,mode){
+  amContext={jour:jour,repas:repas};
+  amPersonnes=4;
+  document.getElementById('am-personnes-val').textContent='4';
+  var k=menuKey(jour,repas),entry=menuData[k]||{plat:'',ingredients:[]};
+  document.getElementById('am-title').textContent=jour+' — '+repas;
+  document.getElementById('am-plat').value=entry.plat||'';
+  renderAmIngList(entry.ingredients||[]);
+  document.getElementById('am-ai-status').style.display='none';
+  if(mode==='sugg'){
+    document.getElementById('am-form').style.display='none';
+    document.getElementById('am-suggestions').style.display='flex';
+    document.getElementById('ov-agenda').classList.add('on');
+    aiSuggestMeals(jour,repas);
+  } else {
+    document.getElementById('am-form').style.display='flex';
+    document.getElementById('am-suggestions').style.display='none';
+    document.getElementById('ov-agenda').classList.add('on');
+  }
+}
+
+function renderAmIngList(ings){
+  var list=document.getElementById('am-ing-list');list.innerHTML='';
+  ings.forEach(function(ing,i){
+    var row=document.createElement('div');row.className='am-ing-row';
+    var nm=document.createElement('input');nm.className='am-ing-nm';nm.value=ing.name||'';nm.placeholder='Ingrédient…';
+    var qt=document.createElement('input');qt.className='am-ing-qt';qt.value=ing.qty||'';qt.placeholder='Qté';
+    var dl=document.createElement('button');dl.className='am-ing-del';dl.innerHTML='×';
+    dl.onclick=(function(idx){return function(){var a=getAmIngs();a.splice(idx,1);renderAmIngList(a);};})(i);
+    row.append(nm,qt,dl);list.appendChild(row);
+  });
+}
+
+function getAmIngs(){
+  var rows=document.querySelectorAll('.am-ing-row'),result=[];
+  rows.forEach(function(row){
+    var nm=row.querySelector('.am-ing-nm').value.trim();
+    var qt=row.querySelector('.am-ing-qt').value.trim();
+    if(nm) result.push({name:nm,qty:qt});
+  });
+  return result;
+}
+
+function amAddIng(){
+  var ings=getAmIngs();ings.push({name:'',qty:''});renderAmIngList(ings);
+  setTimeout(function(){var ins=document.querySelectorAll('.am-ing-nm');if(ins.length)ins[ins.length-1].focus();},50);
+}
+
+function amSave(){
+  if(!amContext) return;
+  var k=menuKey(amContext.jour,amContext.repas);
+  var existId=menuData[k]?menuData[k].id:null;
+  menuData[k]={id:existId,plat:document.getElementById('am-plat').value.trim(),ingredients:getAmIngs()};
+  saveMenuRow(amContext.jour,amContext.repas);
+  closeOverlay('ov-agenda');
+  renderAgenda();
+  toast('✅ Repas enregistré !');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BUDGET
+// ═══════════════════════════════════════════════════════════════
 function computeBudget(){var p=items.filter(function(x){return !x.done;});if(!p.length)return null;var lo=0,hi=0,f=0,u=[];p.forEach(function(item){var pr=calcPrice(item);if(pr){lo+=pr.lo;hi+=pr.hi;f++;}else u.push(item.name);});return{lo:lo,hi:hi,found:f,total:p.length,unknown:u};}
-function renderBudget(){var b=computeBudget();var el=document.getElementById('budget');if(!b||b.total===0){el.classList.add('hide');return;}el.classList.remove('hide');document.getElementById('b-range').textContent=(b.lo===0&&b.hi===0)?'Non estimable':fmt(b.lo)+' \u20ac \u2013 '+fmt(b.hi)+' \u20ac';var pct=Math.round(b.found/b.total*100);var det=b.found+'/'+b.total+' articles estim\xe9s ('+pct+'%)';if(b.unknown.length>0&&b.unknown.length<=3)det+=' \xb7 non estim\xe9s : '+b.unknown.join(', ');else if(b.unknown.length>3)det+=' \xb7 '+b.unknown.length+' non estim\xe9s';document.getElementById('b-detail').textContent=det;}
+function renderBudget(){var b=computeBudget();var el=document.getElementById('budget');if(!b||b.total===0){el.classList.add('hide');return;}el.classList.remove('hide');document.getElementById('b-range').textContent=(b.lo===0&&b.hi===0)?'Non estimable':fmt(b.lo)+' € – '+fmt(b.hi)+' €';var pct=Math.round(b.found/b.total*100);var det=b.found+'/'+b.total+' articles estimés ('+pct+'%)';if(b.unknown.length>0&&b.unknown.length<=3)det+=' · non estimés : '+b.unknown.join(', ');else if(b.unknown.length>3)det+=' · '+b.unknown.length+' non estimés';document.getElementById('b-detail').textContent=det;}
 
-// ─── ONGLETS ──────────────────────────────────────────────────
-function gotoTab(i){activeTab=i;document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',j===i);});document.querySelectorAll('.panel').forEach(function(p,j){p.classList.toggle('on',j===i);});if(i===0)renderList();if(i===1){renderFavs();renderSuggs('');}if(i===3)renderShare();}
+// ═══════════════════════════════════════════════════════════════
+// ONGLETS
+// ═══════════════════════════════════════════════════════════════
+function gotoTab(i){
+  activeTab=i;
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',j===i);});
+  document.querySelectorAll('.panel').forEach(function(p,j){p.classList.toggle('on',j===i);});
+  if(i===0) renderList();
+  if(i===1){renderFavs();renderSuggs('');}
+  if(i===3) renderAgenda();
+  if(i===4) renderShare();
+}
 
-// ─── LISTE ────────────────────────────────────────────────────
-function renderList(){var done=items.filter(function(x){return x.done;}).length;var total=items.length;document.getElementById('counter').textContent=total+' article'+(total!==1?'s':'')+' \xb7 '+done+' fait'+(done!==1?'s':'');document.getElementById('prog-bar').style.width=total>0?Math.round(done/total*100)+'%':'0%';document.getElementById('btn-encours').classList.toggle('on',encours);renderBudget();var ctn=document.getElementById('list-container');var empty=document.getElementById('empty');ctn.innerHTML='';var hasAny=false;orderedCats().forEach(function(cat){var ci=items.filter(function(x){return x.cat===cat.id;});if(!ci.length)return;var vis=encours?ci.filter(function(x){return !x.done;}):ci;if(!vis.length)return;hasAny=true;var sec=document.createElement('div');sec.className='cat-sec'+(collapsed[cat.id]?' col':'');var hdr=document.createElement('div');hdr.className='cat-hdr';hdr.innerHTML='<span class="cat-em">'+cat.emoji+'</span><span class="cat-nm">'+cat.name+'</span><span class="cat-ct">'+vis.length+'</span><span class="cat-arr">\u25be</span>';hdr.onclick=(function(id){return function(){collapsed[id]=!collapsed[id];renderList();};})(cat.id);sec.appendChild(hdr);if(!collapsed[cat.id]){var wrap=document.createElement('div');wrap.className='cat-items';vis.forEach(function(item){wrap.appendChild(editId===item.id?buildEdit(item):buildCard(item));});sec.appendChild(wrap);}ctn.appendChild(sec);});empty.style.display=hasAny?'none':'flex';}
+// ═══════════════════════════════════════════════════════════════
+// LISTE
+// ═══════════════════════════════════════════════════════════════
+function renderList(){
+  var done=items.filter(function(x){return x.done;}).length,total=items.length;
+  document.getElementById('counter').textContent=total+' article'+(total!==1?'s':'')+' · '+done+' fait'+(done!==1?'s':'');
+  document.getElementById('prog-bar').style.width=total>0?Math.round(done/total*100)+'%':'0%';
+  document.getElementById('btn-encours').classList.toggle('on',encours);
+  renderBudget();
+  var ctn=document.getElementById('list-container'),empty=document.getElementById('empty');
+  ctn.innerHTML='';var hasAny=false;
+  orderedCats().forEach(function(cat){
+    var ci=items.filter(function(x){return x.cat===cat.id;});if(!ci.length)return;
+    var vis=encours?ci.filter(function(x){return !x.done;}):ci;if(!vis.length)return;
+    hasAny=true;
+    var sec=document.createElement('div');sec.className='cat-sec'+(collapsed[cat.id]?' col':'');
+    var hdr=document.createElement('div');hdr.className='cat-hdr';
+    hdr.innerHTML='<span class="cat-em">'+cat.emoji+'</span><span class="cat-nm">'+cat.name+'</span><span class="cat-ct">'+vis.length+'</span><span class="cat-arr">▾</span>';
+    hdr.onclick=(function(id){return function(){collapsed[id]=!collapsed[id];renderList();};})(cat.id);
+    sec.appendChild(hdr);
+    if(!collapsed[cat.id]){var wrap=document.createElement('div');wrap.className='cat-items';vis.forEach(function(item){wrap.appendChild(editId===item.id?buildEdit(item):buildCard(item));});sec.appendChild(wrap);}
+    ctn.appendChild(sec);
+  });
+  empty.style.display=hasAny?'none':'flex';
+}
 
-function buildCard(item){var card=document.createElement('div');card.className='item'+(item.done?' done':'');card.dataset.id=item.id;var chk=document.createElement('button');chk.className='chk'+(item.done?' on':'');chk.onclick=(function(it){return function(){it.done=!it.done;saveAndSync();renderList();};})(item);var nm=document.createElement('span');nm.className='i-name';nm.textContent=item.name;nm.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);var qty=document.createElement('span');qty.className='i-qty';qty.textContent=item.qty||'';qty.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);var priceEl=document.createElement('span');priceEl.className='i-price';var p=calcPrice(item);if(p&&p.lo>0)priceEl.textContent='~'+Math.round(p.lo)+'-'+Math.round(p.hi)+'\u20ac';var del=document.createElement('button');del.className='i-del';del.innerHTML='\xd7';del.onclick=(function(id){return function(){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();};})(item.id);card.append(chk,nm,qty,priceEl,del);var sx=0,dx=0,sw=false;card.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;dx=0;sw=false;},{passive:true});card.addEventListener('touchmove',function(e){dx=e.touches[0].clientX-sx;if(Math.abs(dx)>10){sw=true;card.style.transform='translateX('+Math.min(0,dx)+'px)';card.classList.toggle('swiping',dx<-50);}},{passive:true});card.addEventListener('touchend',(function(id){return function(){if(sw&&dx<-80){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();}else{card.style.transform='';card.classList.remove('swiping');}};})(item.id));return card;}
+function buildCard(item){
+  var card=document.createElement('div');card.className='item'+(item.done?' done':'');card.dataset.id=item.id;
+  var chk=document.createElement('button');chk.className='chk'+(item.done?' on':'');chk.onclick=(function(it){return function(){it.done=!it.done;saveAndSync();renderList();};})(item);
+  var nm=document.createElement('span');nm.className='i-name';nm.textContent=item.name;nm.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);
+  var qty=document.createElement('span');qty.className='i-qty';qty.textContent=item.qty||'';qty.onclick=(function(id){return function(){editId=id;renderList();};})(item.id);
+  var priceEl=document.createElement('span');priceEl.className='i-price';var p=calcPrice(item);if(p&&p.lo>0)priceEl.textContent='~'+Math.round(p.lo)+'-'+Math.round(p.hi)+'€';
+  var del=document.createElement('button');del.className='i-del';del.innerHTML='×';del.onclick=(function(id){return function(){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();};})(item.id);
+  card.append(chk,nm,qty,priceEl,del);
+  var sx=0,dx=0,sw=false;
+  card.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;dx=0;sw=false;},{passive:true});
+  card.addEventListener('touchmove',function(e){dx=e.touches[0].clientX-sx;if(Math.abs(dx)>10){sw=true;card.style.transform='translateX('+Math.min(0,dx)+'px)';card.classList.toggle('swiping',dx<-50);}},{passive:true});
+  card.addEventListener('touchend',(function(id){return function(){if(sw&&dx<-80){items=items.filter(function(x){return x.id!==id;});saveAndSync();renderList();}else{card.style.transform='';card.classList.remove('swiping');}};})(item.id));
+  return card;
+}
 
-function buildEdit(item){var card=document.createElement('div');card.className='editcard';var ni=document.createElement('input');ni.className='en';ni.value=item.name;ni.placeholder='Nom';var qi=document.createElement('input');qi.className='eq';qi.value=item.qty||'';qi.placeholder='Qté';var ok=document.createElement('button');ok.className='eok';ok.textContent='\u2713';var cx=document.createElement('button');cx.className='ecx';cx.textContent='\u2715';function doConfirm(){var v=ni.value.trim();if(v){item.name=v;item.qty=qi.value.trim();item.cat=detectCat(v);}editId=null;saveAndSync();renderList();}function doCancel(){editId=null;renderList();}ok.onclick=doConfirm;cx.onclick=doCancel;ni.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};qi.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};card.append(ni,qi,ok,cx);setTimeout(function(){ni.focus();},40);return card;}
+function buildEdit(item){
+  var card=document.createElement('div');card.className='editcard';
+  var ni=document.createElement('input');ni.className='en';ni.value=item.name;ni.placeholder='Nom';
+  var qi=document.createElement('input');qi.className='eq';qi.value=item.qty||'';qi.placeholder='Qté';
+  var ok=document.createElement('button');ok.className='eok';ok.textContent='✓';
+  var cx=document.createElement('button');cx.className='ecx';cx.textContent='✕';
+  function doConfirm(){var v=ni.value.trim();if(v){item.name=v;item.qty=qi.value.trim();item.cat=detectCat(v);}editId=null;saveAndSync();renderList();}
+  function doCancel(){editId=null;renderList();}
+  ok.onclick=doConfirm;cx.onclick=doCancel;
+  ni.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};
+  qi.onkeydown=function(e){if(e.key==='Enter')doConfirm();if(e.key==='Escape')doCancel();};
+  card.append(ni,qi,ok,cx);setTimeout(function(){ni.focus();},40);
+  return card;
+}
 
 function toggleEncours(){encours=!encours;renderList();}
-function clearDone(){items=items.filter(function(x){return !x.done;});saveAndSync();renderList();toast('Articles faits supprim\xe9s');}
+function clearDone(){items=items.filter(function(x){return !x.done;});saveAndSync();renderList();toast('Articles faits supprimés');}
 
-// ─── SUGGESTIONS & AJOUT ──────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// SUGGESTIONS & AJOUT
+// ═══════════════════════════════════════════════════════════════
 document.getElementById('in-name').addEventListener('input',function(){renderSuggs(this.value);});
 document.getElementById('in-name').addEventListener('keydown',function(e){if(e.key==='Enter')addFromInput();});
-function renderSuggs(v){var box=document.getElementById('suggs');if(!v.trim()){box.style.display='none';return;}var nv=nrm(v),hits=[];CATS.forEach(function(cat){(KW[cat.id]||[]).forEach(function(kw){if(nrm(kw).indexOf(nv)!==-1&&hits.length<6)hits.push({kw:kw,cat:cat});});});if(!hits.length){box.style.display='none';return;}box.style.display='block';box.innerHTML='';hits.forEach(function(h){var d=document.createElement('div');d.className='sugg';var e=lookupDB(h.kw);var ps=e?fmt(e.d[0])+'\u2013'+fmt(e.d[1])+' '+e.d[2]:'';d.innerHTML='<span>'+h.kw+'</span><span class="sugg-cat">'+h.cat.emoji+'</span>'+(ps?'<span class="sugg-price">'+ps+'</span>':'');d.onclick=(function(kw){return function(){document.getElementById('in-name').value=kw;box.style.display='none';};})(h.kw);box.appendChild(d);});}
-function addFromInput(){var n=document.getElementById('in-name').value.trim();var q=document.getElementById('in-qty').value.trim();if(!n)return;addItem(n,q,true);document.getElementById('in-name').value='';document.getElementById('in-qty').value='';document.getElementById('suggs').style.display='none';renderFavs();toast('"'+n+'" ajout\xe9');}
+function renderSuggs(v){
+  var box=document.getElementById('suggs');if(!v.trim()){box.style.display='none';return;}
+  var nv=nrm(v),hits=[];
+  CATS.forEach(function(cat){(KW[cat.id]||[]).forEach(function(kw){if(nrm(kw).indexOf(nv)!==-1&&hits.length<6)hits.push({kw:kw,cat:cat});});});
+  if(!hits.length){box.style.display='none';return;}
+  box.style.display='block';box.innerHTML='';
+  hits.forEach(function(h){
+    var d=document.createElement('div');d.className='sugg';
+    var e=lookupDB(h.kw);var ps=e?fmt(e.d[0])+'–'+fmt(e.d[1])+' '+e.d[2]:'';
+    d.innerHTML='<span>'+h.kw+'</span><span class="sugg-cat">'+h.cat.emoji+'</span>'+(ps?'<span class="sugg-price">'+ps+'</span>':'');
+    d.onclick=(function(kw){return function(){document.getElementById('in-name').value=kw;box.style.display='none';};})(h.kw);
+    box.appendChild(d);
+  });
+}
+function addFromInput(){var n=document.getElementById('in-name').value.trim(),q=document.getElementById('in-qty').value.trim();if(!n)return;addItem(n,q,true);document.getElementById('in-name').value='';document.getElementById('in-qty').value='';document.getElementById('suggs').style.display='none';renderFavs();toast('"'+n+'" ajouté');}
 function addItem(name,qty,saveFav){var existing=items.find(function(x){return nrm(x.name)===nrm(name);});if(existing){existing.qty=qty||existing.qty;saveAndSync();if(activeTab===0)renderList();return;}items.push({id:uid(),name:name,qty:qty||'',cat:detectCat(name),done:false});if(saveFav&&favs.indexOf(name)===-1)favs.push(name);saveAndSync();if(activeTab===0)renderList();}
 
-// ─── FAVORIS ──────────────────────────────────────────────────
-function renderFavs(){var list=document.getElementById('favs-list');list.innerHTML='';if(!favs.length){list.innerHTML='<div style="font-family:Courier New,monospace;font-size:11px;color:rgba(255,255,255,.28);padding:4px 2px">Aucun favori encore</div>';}else{favs.forEach(function(name){var row=document.createElement('div');row.className='fav';var nm=document.createElement('span');nm.className='fav-nm';nm.textContent=name;var dl=document.createElement('button');dl.className='fav-del';dl.textContent='\xd7';dl.onclick=(function(n){return function(){favs=favs.filter(function(f){return f!==n;});delete selFavs[n];saveAndSync();renderFavs();};})(name);var ck=document.createElement('button');ck.className='fav-chk'+(selFavs[name]?' on':'');ck.onclick=(function(n){return function(){selFavs[n]=!selFavs[n];renderFavs();};})(name);row.append(nm,dl,ck);list.appendChild(row);});}var n=Object.keys(selFavs).filter(function(k){return selFavs[k];}).length;var btn=document.getElementById('btn-favs');btn.disabled=n===0;btn.textContent='Ajouter '+n+' article'+(n!==1?'s':'')+' \xe0 la liste';}
-function addSelFavs(){var sel=Object.keys(selFavs).filter(function(k){return selFavs[k];});sel.forEach(function(name){addItem(name,'',false);});toast(sel.length+' article'+(sel.length>1?'s':'')+' ajout\xe9'+(sel.length>1?'s':''));selFavs={};renderFavs();renderList();}
+// ═══════════════════════════════════════════════════════════════
+// FAVORIS
+// ═══════════════════════════════════════════════════════════════
+function renderFavs(){
+  var list=document.getElementById('favs-list');list.innerHTML='';
+  if(!favs.length){list.innerHTML='<div style="font-family:Courier New,monospace;font-size:11px;color:rgba(255,255,255,.28);padding:4px 2px">Aucun favori encore</div>';}
+  else{favs.forEach(function(name){var row=document.createElement('div');row.className='fav';var nm=document.createElement('span');nm.className='fav-nm';nm.textContent=name;var dl=document.createElement('button');dl.className='fav-del';dl.textContent='×';dl.onclick=(function(n){return function(){favs=favs.filter(function(f){return f!==n;});delete selFavs[n];saveAndSync();renderFavs();};})(name);var ck=document.createElement('button');ck.className='fav-chk'+(selFavs[name]?' on':'');ck.onclick=(function(n){return function(){selFavs[n]=!selFavs[n];renderFavs();};})(name);row.append(nm,dl,ck);list.appendChild(row);});}
+  var n=Object.keys(selFavs).filter(function(k){return selFavs[k];}).length;
+  var btn=document.getElementById('btn-favs');btn.disabled=n===0;btn.textContent='Ajouter '+n+' article'+(n!==1?'s':'')+' à la liste';
+}
+function addSelFavs(){var sel=Object.keys(selFavs).filter(function(k){return selFavs[k];});sel.forEach(function(name){addItem(name,'',false);});toast(sel.length+' article'+(sel.length>1?'s':'')+' ajouté'+(sel.length>1?'s':''));selFavs={};renderFavs();renderList();}
 
-// ─── IMPORT RECETTE ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// IMPORT RECETTE
+// ═══════════════════════════════════════════════════════════════
 var NOISE=['rape','hache','frais','fraiche','emince','vert','verts','jaune','rouge','surgele','cuit','cru','entier','fin','gros','moulu','broye','blanc','noir','bio','extra','epais'];
 var ARTCL=['de la','du','d','des','le','la','les','l','un','une','en','au','aux','de'];
 var CONT=['gousse','tranche','filet','branche','botte','brin','zeste','cube','rondelle','quartier','morceau','tige','feuille','tete','bouquet','boite','sachet','pot'];
 function parseLine(line){line=line.replace(/^[\-\u2022*\u00b7\u2013\u2014>]+\s*/,'').replace(/[\u2018\u2019\u02bc']/g,' ').replace(/\(.*?\)/g,'').trim();if(!line)return null;var qty='';var qm=line.match(/^(\d[\d.,\/]*\s*(?:g|kg|ml|l|cl|dl)?)\s+/i);if(qm){qty=qm[1].trim();line=line.slice(qm[0].length);}var n=nrm(line);ARTCL.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(a){n=n.replace(new RegExp('^'+nrm(a)+'\\s+'),'');});for(var ci=0;ci<CONT.length;ci++){var cm=n.match(new RegExp('(^|\\s)'+nrm(CONT[ci])+'s?\\s+(d |de |du |de la |des |d )?'));if(cm){var rest=n.slice(cm.index+cm[0].length).trim();if(rest){n=rest;break;}}}ARTCL.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(a){n=n.replace(new RegExp('^'+nrm(a)+'\\s+'),'');});var words=n.split(/\s+/).filter(function(w){return NOISE.indexOf(w)===-1&&ARTCL.indexOf(w)===-1&&w.length>0;});var name=words.join(' ').trim();if(!name)return null;name=name.charAt(0).toUpperCase()+name.slice(1);return{name:name,qty:qty};}
-function importRecipe(){var text=document.getElementById('recipe-area').value;var added=0;text.split(/[\n;]/).forEach(function(line){var p=parseLine(line.trim());if(!p)return;if(!items.find(function(x){return nrm(x.name)===nrm(p.name);})){addItem(p.name,p.qty,false);added++;}});document.getElementById('recipe-area').value='';toast(added+' article'+(added!==1?'s':'')+' import\xe9'+(added!==1?'s':''));gotoTab(0);}
+function importRecipe(){var text=document.getElementById('recipe-area').value;var added=0;text.split(/[\n;]/).forEach(function(line){var p=parseLine(line.trim());if(!p)return;if(!items.find(function(x){return nrm(x.name)===nrm(p.name);})){addItem(p.name,p.qty,false);added++;}});document.getElementById('recipe-area').value='';toast(added+' article'+(added!==1?'s':'')+' importé'+(added!==1?'s':''));gotoTab(0);}
 
-// ─── PARTAGE ──────────────────────────────────────────────────
-function renderShare(){var r='';orderedCats().forEach(function(cat){var ci=items.filter(function(x){return x.cat===cat.id&&!x.done;});if(!ci.length)return;r+=cat.emoji+' '+cat.name+'\n';ci.forEach(function(x){r+='  \u2022 '+x.name+(x.qty?' \u2014 '+x.qty:'')+'\n';});r+='\n';});document.getElementById('share-r').textContent=r.trim()||'(liste vide)';var raw=items.filter(function(x){return !x.done;}).map(function(x){return x.name+(x.qty?' \u2014 '+x.qty:'');}).join('\n');document.getElementById('share-raw').textContent=raw||'(liste vide)';}
-function copyShare(type){var txt=document.getElementById(type==='r'?'share-r':'share-raw').textContent;navigator.clipboard.writeText(txt);toast('\u2713 Copi\xe9 !');}
+// ═══════════════════════════════════════════════════════════════
+// PARTAGE
+// ═══════════════════════════════════════════════════════════════
+function renderShare(){var r='';orderedCats().forEach(function(cat){var ci=items.filter(function(x){return x.cat===cat.id&&!x.done;});if(!ci.length)return;r+=cat.emoji+' '+cat.name+'\n';ci.forEach(function(x){r+='  • '+x.name+(x.qty?' — '+x.qty:'')+'\n';});r+='\n';});document.getElementById('share-r').textContent=r.trim()||'(liste vide)';var raw=items.filter(function(x){return !x.done;}).map(function(x){return x.name+(x.qty?' — '+x.qty:'');}).join('\n');document.getElementById('share-raw').textContent=raw||'(liste vide)';}
+function copyShare(type){var txt=document.getElementById(type==='r'?'share-r':'share-raw').textContent;navigator.clipboard.writeText(txt);toast('✓ Copié !');}
 
-// ─── MODALS ───────────────────────────────────────────────────
-function openBI(){var rows=document.getElementById('bi-rows');rows.innerHTML='';items.filter(function(x){return !x.done;}).forEach(function(item){var p=calcPrice(item);var pm=parseMult(item.qty,item.name);var row=document.createElement('div');row.className='bi-row';var nm=document.createElement('span');nm.className='bi-nm';nm.textContent=item.name+(item.qty?' ('+item.qty+')':'');var unit=document.createElement('span');unit.className='bi-unit';var val=document.createElement('span');if(p&&p.lo>0){unit.textContent=pm.label||'';val.className='bi-val';val.textContent='~'+fmt(p.lo)+'\u2013'+fmt(p.hi)+' \u20ac';}else{val.className='bi-unk';val.textContent='?';}row.append(nm,unit,val);rows.appendChild(row);});document.getElementById('ov-bi').classList.add('on');}
-function closeBI(){document.getElementById('ov-bi').classList.remove('on');}
-function maybeCloseBI(e){if(e.target===document.getElementById('ov-bi'))closeBI();}
+// ═══════════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════════
+function openBI(){var rows=document.getElementById('bi-rows');rows.innerHTML='';items.filter(function(x){return !x.done;}).forEach(function(item){var p=calcPrice(item);var pm=parseMult(item.qty,item.name);var row=document.createElement('div');row.className='bi-row';var nm=document.createElement('span');nm.className='bi-nm';nm.textContent=item.name+(item.qty?' ('+item.qty+')':'');var unit=document.createElement('span');unit.className='bi-unit';var val=document.createElement('span');if(p&&p.lo>0){unit.textContent=pm.label||'';val.className='bi-val';val.textContent='~'+fmt(p.lo)+'–'+fmt(p.hi)+' €';}else{val.className='bi-unk';val.textContent='?';}row.append(nm,unit,val);rows.appendChild(row);});document.getElementById('ov-bi').classList.add('on');}
 
 var dragSrc=null;
-function openOrder(){var ol=document.getElementById('order-list');ol.innerHTML='';orderedCats().forEach(function(cat){var item=document.createElement('div');item.className='ord-item';item.draggable=true;item.dataset.id=cat.id;item.innerHTML='<span class="drag-h">\u2838\u2838</span><span style="font-size:15px">'+cat.emoji+'</span><span class="ord-nm">'+cat.name+'</span>';item.addEventListener('dragstart',function(){dragSrc=item;setTimeout(function(){item.classList.add('dragging');},0);});item.addEventListener('dragend',function(){item.classList.remove('dragging');saveOrder();});item.addEventListener('dragover',function(e){e.preventDefault();var r=item.getBoundingClientRect();ol.insertBefore(dragSrc,e.clientY<r.top+r.height/2?item:item.nextSibling);});var sy=0,clone=null;item.addEventListener('touchstart',function(e){sy=e.touches[0].clientY;dragSrc=item;clone=item.cloneNode(true);clone.style.cssText='position:fixed;width:'+item.offsetWidth+'px;opacity:.85;pointer-events:none;z-index:9999;top:'+item.getBoundingClientRect().top+'px;left:'+item.getBoundingClientRect().left+'px;background:var(--s3)';document.body.appendChild(clone);item.style.opacity='.3';},{passive:true});item.addEventListener('touchmove',function(e){var dy=e.touches[0].clientY-sy;if(clone)clone.style.top=(item.getBoundingClientRect().top+dy)+'px';var el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);var tgt=el&&el.closest('.ord-item');if(tgt&&tgt!==dragSrc){var r=tgt.getBoundingClientRect();ol.insertBefore(dragSrc,e.touches[0].clientY<r.top+r.height/2?tgt:tgt.nextSibling);}},{passive:true});item.addEventListener('touchend',function(){item.style.opacity='';if(clone){clone.remove();clone=null;}saveOrder();});ol.appendChild(item);});document.getElementById('ov-order').classList.add('on');}
+function openOrder(){var ol=document.getElementById('order-list');ol.innerHTML='';orderedCats().forEach(function(cat){var item=document.createElement('div');item.className='ord-item';item.draggable=true;item.dataset.id=cat.id;item.innerHTML='<span class="drag-h">⠿⠿</span><span style="font-size:15px">'+cat.emoji+'</span><span class="ord-nm">'+cat.name+'</span>';item.addEventListener('dragstart',function(){dragSrc=item;setTimeout(function(){item.classList.add('dragging');},0);});item.addEventListener('dragend',function(){item.classList.remove('dragging');saveOrder();});item.addEventListener('dragover',function(e){e.preventDefault();var r=item.getBoundingClientRect();ol.insertBefore(dragSrc,e.clientY<r.top+r.height/2?item:item.nextSibling);});var sy=0,clone=null;item.addEventListener('touchstart',function(e){sy=e.touches[0].clientY;dragSrc=item;clone=item.cloneNode(true);clone.style.cssText='position:fixed;width:'+item.offsetWidth+'px;opacity:.85;pointer-events:none;z-index:9999;top:'+item.getBoundingClientRect().top+'px;left:'+item.getBoundingClientRect().left+'px;background:var(--s3)';document.body.appendChild(clone);item.style.opacity='.3';},{passive:true});item.addEventListener('touchmove',function(e){var dy=e.touches[0].clientY-sy;if(clone)clone.style.top=(item.getBoundingClientRect().top+dy)+'px';var el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);var tgt=el&&el.closest('.ord-item');if(tgt&&tgt!==dragSrc){var r=tgt.getBoundingClientRect();ol.insertBefore(dragSrc,e.touches[0].clientY<r.top+r.height/2?tgt:tgt.nextSibling);}},{passive:true});item.addEventListener('touchend',function(){item.style.opacity='';if(clone){clone.remove();clone=null;}saveOrder();});ol.appendChild(item);});document.getElementById('ov-order').classList.add('on');}
 function saveOrder(){catOrder=Array.from(document.querySelectorAll('#order-list .ord-item')).map(function(el){return el.dataset.id;});save();renderList();}
-function closeOrder(){document.getElementById('ov-order').classList.remove('on');}
-function maybeCloseOrder(e){if(e.target===document.getElementById('ov-order'))closeOrder();}
 
-// ─── INIT ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
 (function init(){
-  // Restaurer session auth
   var stored=localStorage.getItem('crs_auth')||readCookie('crs_auth');
   if(stored){
     try{
       var auth=JSON.parse(stored);
       if(auth.token&&auth.userId){
-        authToken=auth.token;
-        authUserId=auth.userId;
-        sbCfg={listKey:auth.userId,email:auth.email};
-        supabase=true;
-        // Tente un refresh du token pour s'assurer qu'il est valide
-        if(auth.refreshToken){
-          refreshToken(auth.refreshToken).then(function(ok){
-            if(!ok){
-              // Token expiré et refresh échoué → déconnecter proprement
-              authLogout();
-              setSyncStatus('err','Session expirée. Veuillez vous reconnecter.');
-            } else {
-              pullFromSupabase().then(function(changed){if(changed){renderList();renderFavs();}startRealtimeSync();});
-            }
-          });
-        } else {
-          pullFromSupabase().then(function(changed){if(changed){renderList();renderFavs();}startRealtimeSync();});
-        }
-        setSyncStatus('ok','\u2713 Connect\xe9 \u2014 '+auth.email);
-        setSyncIcon(true);
+        authToken=auth.token;authUserId=auth.userId;
+        sbCfg={listKey:auth.userId,email:auth.email};supabase=true;
+        setSyncStatus('ok','✓ Connecté — '+auth.email);setSyncIcon(true);
         document.getElementById('auth-form').style.display='none';
         document.getElementById('auth-connected').style.display='flex';
-        document.getElementById('auth-connected-info').textContent='Connect\xe9 : '+auth.email;
+        document.getElementById('auth-connected-info').textContent='Connecté : '+auth.email;
         document.getElementById('setup-banner').classList.add('hide');
+        if(auth.refreshToken){
+          refreshToken(auth.refreshToken).then(function(ok){
+            if(!ok){authLogout();setSyncStatus('err','Session expirée. Reconnectez-vous.');}
+            else{pullFromSupabase().then(function(c){if(c){renderList();renderFavs();}loadMenuFromSupabase();startRealtimeSync();});}
+          });
+        } else {
+          pullFromSupabase().then(function(c){if(c){renderList();renderFavs();}loadMenuFromSupabase();startRealtimeSync();});
+        }
       }
     }catch(e){}
   }
